@@ -14,7 +14,11 @@
   --color-text-secondary-2: #8a93a1;
   --color-text-secondary-3: #9aa2ae;
 
-  --color-accent: #14b8a6;
+  --color-accent: #863bff;
+  --color-accent-hover: #7228e6;
+  --color-accent-deep: #7e14ff;
+  --color-accent-light: #ede6ff;
+  --color-accent-cyan: #47bfff;
 
   --color-positive-text: #15803d;
   --color-positive-base: #16a34a;
