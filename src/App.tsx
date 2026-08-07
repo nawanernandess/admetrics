@@ -11,6 +11,19 @@ import { NewProductModal } from '@/components/product/NewProductModal'
 import { LoginScreen } from '@/components/auth/LoginScreen'
 import { buttonPrimaryClass } from '@/components/common/formStyles'
 
+function MenuIcon() {
+  return (
+    <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5">
+      <path
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        d="M3 5.833h14M3 10h14M3 14.167h14"
+      />
+    </svg>
+  )
+}
+
 function EmptyWorkspace() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   return (
@@ -42,6 +55,7 @@ function AuthenticatedApp() {
   const recordsByProduct = useAppStore((state) => state.recordsByProduct)
   const selectedTab = useAppStore((state) => state.selectedTab)
   const loadData = useAppStore((state) => state.loadData)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   useEffect(() => {
     loadData()
@@ -60,8 +74,19 @@ function AuthenticatedApp() {
 
   return (
     <div className="flex h-screen overflow-hidden">
-      <Sidebar />
+      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       <div className="flex flex-1 flex-col overflow-hidden">
+        <div className="flex items-center gap-3 border-b border-[var(--color-card-border)] bg-[var(--color-card-bg)] px-4 py-3 md:hidden">
+          <button
+            type="button"
+            onClick={() => setIsSidebarOpen(true)}
+            aria-label="Abrir menu"
+            className="rounded-md p-1.5 text-[var(--color-text-primary)] transition-colors duration-150 hover:bg-slate-100"
+          >
+            <MenuIcon />
+          </button>
+          <span className="text-sm font-bold text-[var(--color-text-primary)]">AdMetrics</span>
+        </div>
         {selectedProduct ? (
           <>
             <Header product={selectedProduct} totalDays={records.length} />

@@ -147,7 +147,7 @@ function RecordForm({ product, existingRecord }: RecordFormProps) {
 
       <section>
         <h3 className={sectionTitleClass}>Tráfego</h3>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <Field label="Impressões">
             <input className={inputClass} inputMode="decimal" {...register('impressions')} />
           </Field>
@@ -162,7 +162,7 @@ function RecordForm({ product, existingRecord }: RecordFormProps) {
 
       <section>
         <h3 className={sectionTitleClass}>Funil</h3>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="Checkouts">
             <input className={inputClass} inputMode="decimal" {...register('checkouts')} />
           </Field>
@@ -174,7 +174,7 @@ function RecordForm({ product, existingRecord }: RecordFormProps) {
 
       <section>
         <h3 className={sectionTitleClass}>Financeiro</h3>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <Field label="Custo (R$)">
             <input className={inputClass} inputMode="decimal" {...register('cost')} />
           </Field>
@@ -187,7 +187,7 @@ function RecordForm({ product, existingRecord }: RecordFormProps) {
           <Field label="Orçam. diário (R$)">
             <input className={inputClass} inputMode="decimal" {...register('dailyBudget')} />
           </Field>
-          <Field label="Estratégia de lance" className="col-span-2">
+          <Field label="Estratégia de lance" className="sm:col-span-2">
             <select className={inputClass} {...register('bidStrategy')}>
               {STRATEGIES.map((strategy) => (
                 <option key={strategy} value={strategy}>
@@ -201,7 +201,7 @@ function RecordForm({ product, existingRecord }: RecordFormProps) {
 
       <section>
         <h3 className={sectionTitleClass}>Controle</h3>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <Field label="Parc. superior (%)">
             <input className={inputClass} inputMode="decimal" {...register('topShare')} />
           </Field>
