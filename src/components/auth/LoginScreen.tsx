@@ -5,8 +5,6 @@ import { buttonPrimaryClass, labelClass } from '@/components/common/formStyles'
 
 type AuthMode = 'login' | 'signup'
 
-const SOCIAL_ICONS = ['github-icon', 'x-icon', 'discord-icon', 'bluesky-icon'] as const
-
 const inputWithIconClass =
   'w-full rounded-lg border border-[var(--color-card-border)] bg-white py-2 pl-9 pr-3 text-sm text-[var(--color-text-primary)] outline-none transition-colors duration-150 focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20'
 
@@ -120,63 +118,50 @@ export function LoginScreen() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[var(--color-bg)] px-4 py-10">
-      <div className="animate-fade-in-up grid w-full max-w-3xl grid-cols-1 overflow-hidden rounded-3xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] shadow-xl md:min-h-[560px] md:grid-cols-2">
+      <div className="animate-fade-in-up grid w-full max-w-3xl grid-cols-1 overflow-hidden rounded-3xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] shadow-xl md:grid-cols-2">
         {/* Painel de identidade */}
-        <div className="relative order-2 flex flex-col justify-between overflow-hidden p-8 text-white md:order-1">
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                'radial-gradient(130% 140% at 0% 0%, var(--color-accent-deep) 0%, var(--color-accent) 55%, var(--color-accent-cyan) 130%)',
-            }}
-          />
-          <div className="absolute -top-16 -left-14 h-56 w-56 rounded-full bg-[var(--color-accent-light)] opacity-25 blur-3xl" />
-          <div className="absolute -right-16 -bottom-20 h-64 w-64 rounded-full bg-[var(--color-accent-cyan)] opacity-30 blur-3xl" />
+        <div className="relative order-2 flex flex-col overflow-hidden bg-[#fbfaff] p-8 md:order-1">
+          <div className="absolute -top-20 -left-16 h-64 w-64 rounded-full bg-[var(--color-accent)] opacity-35 blur-3xl" />
+          <div className="absolute top-1/3 -right-14 h-56 w-56 rounded-full bg-[var(--color-accent-cyan)] opacity-30 blur-3xl" />
+          <div className="absolute -bottom-24 -left-10 h-64 w-64 rounded-full bg-[var(--color-accent-deep)] opacity-20 blur-3xl" />
+          <div className="absolute top-8 right-10 h-24 w-24 rounded-full bg-[var(--color-accent-light)] opacity-70 blur-2xl" />
           <img
             src="/favicon.svg"
             alt=""
             aria-hidden="true"
-            className="pointer-events-none absolute -right-16 -bottom-12 h-64 w-64 rotate-12 opacity-20"
+            className="pointer-events-none absolute right-6 bottom-6 h-28 w-28 opacity-50"
           />
 
           <div className="relative">
-            <p className="text-xs font-semibold tracking-widest text-white/70 uppercase">
+            <p className="text-xs font-semibold tracking-widest text-[var(--color-text-secondary)] uppercase">
               Bem-vindo
             </p>
-            <h1 className="mt-2 text-2xl font-bold">
+            <h1 className="mt-2 text-2xl font-bold text-[var(--color-text-primary)]">
               {mode === 'login' ? 'Novo Login' : 'Inscreva-se'}
             </h1>
-            <p className="mt-2 max-w-[240px] text-sm text-white/80">
+            <p className="mt-2 max-w-[240px] text-sm text-[var(--color-text-secondary)]">
               {mode === 'login'
                 ? 'Acesse sua conta para acompanhar seus produtos.'
                 : 'Crie uma conta para começar a monitorar seus produtos.'}
             </p>
           </div>
 
-          <div className="relative flex items-center gap-3">
+          <div className="relative flex flex-1 items-center gap-3">
             <button
               type="button"
               onClick={toggleMode}
               aria-label="Alternar entre login e cadastro"
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white transition-colors duration-150 hover:bg-white/25"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[var(--color-text-primary)] shadow-sm ring-1 ring-black/5 transition-colors duration-150 hover:bg-slate-50"
             >
               <SwapIcon />
             </button>
             <button
               type="button"
               onClick={toggleMode}
-              className="rounded-lg border border-white/30 px-4 py-2 text-sm font-medium text-white transition-colors duration-150 hover:bg-white/10"
+              className="rounded-lg bg-[var(--color-text-primary)] px-4 py-2 text-sm font-medium text-white transition-opacity duration-150 hover:opacity-90"
             >
               {mode === 'login' ? 'Criar conta' : 'Fazer login'}
             </button>
-          </div>
-
-          <div className="relative flex items-center gap-3 text-white/70">
-            {SOCIAL_ICONS.map((icon) => (
-              <svg key={icon} viewBox="0 0 20 20" className="h-4 w-4 fill-current opacity-80">
-                <use href={`/icons.svg#${icon}`} />
-              </svg>
-            ))}
           </div>
         </div>
 

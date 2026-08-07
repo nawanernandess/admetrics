@@ -92,7 +92,7 @@ export function SettingsTab({
   }
 
   return (
-    <div className="animate-fade-in-up max-w-2xl">
+    <div className="animate-fade-in-up">
       <div className="flex items-center justify-between">
         <h2 className="text-base font-semibold text-[var(--color-text-primary)]">
           Valores globais do produto
@@ -108,7 +108,7 @@ export function SettingsTab({
           <input className={inputClass} {...register('name')} />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           <div>
             <label className={labelClass}>Estratégia de lance</label>
             <select className={inputClass} {...register('strategy')}>
