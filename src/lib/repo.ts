@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { db } from '@/lib/db'
 import { decryptJson, encryptJson } from '@/lib/crypto'
 import { getEncryptionKey } from '@/lib/authSession'
+import { DEFAULT_VISIBLE_COLUMN_IDS, sanitizeColumnIds } from '@/lib/columns'
 import type { DailyRecord, DailyRecordInput, Product, ProductInput } from '@/types'
 
 /**
@@ -90,3 +91,36 @@ class DexieRecordRepository implements RecordRepository {
 
 export const productRepository: ProductRepository = new DexieProductRepository()
 export const recordRepository: RecordRepository = new DexieRecordRepository()
+
+const RECORDS_COLUMNS_PREFERENCE_ID = 'records-table-columns'
+
+export interface RecordsColumnsPreference {
+  visibleColumnIds: string[]
+}
+
+export interface PreferenceRepository {
+  getRecordsColumns(): Promise<RecordsColumnsPreference>
+  setRecordsColumns(preference: RecordsColumnsPreference): Promise<void>
+}
+
+class DexiePreferenceRepository implements PreferenceRepository {
+  async getRecordsColumns(): Promise<RecordsColumnsPreference> {
+    const row = await db.preferences.get(RECORDS_COLUMNS_PREFERENCE_ID)
+    if (!row) return { visibleColumnIds: DEFAULT_VISIBLE_COLUMN_IDS }
+
+    const key = getEncryptionKey()
+    const preference = await decryptJson<RecordsColumnsPreference>(key, row)
+    const visibleColumnIds = sanitizeColumnIds(preference.visibleColumnIds)
+    return {
+      visibleColumnIds: visibleColumnIds.length > 0 ? visibleColumnIds : DEFAULT_VISIBLE_COLUMN_IDS,
+    }
+  }
+
+  async setRecordsColumns(preference: RecordsColumnsPreference): Promise<void> {
+    const key = getEncryptionKey()
+    const payload = await encryptJson(key, preference)
+    await db.preferences.put({ id: RECORDS_COLUMNS_PREFERENCE_ID, ...payload })
+  }
+}
+
+export const preferenceRepository: PreferenceRepository = new DexiePreferenceRepository()

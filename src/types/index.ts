@@ -54,4 +54,8 @@ export interface ComputedRecord extends DailyRecord {
   result7d: number
   cumulativeResult: number
   dropoffRate: number
+  conversionRate: number
+  costPerConversion: number
+  roas: number
+  cpm: number
 }

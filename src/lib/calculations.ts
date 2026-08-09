@@ -20,6 +20,22 @@ export function calculateDropoffRate(record: DailyRecord): number {
   return (record.checkouts - record.conversions) / record.checkouts
 }
 
+export function calculateConversionRate(record: DailyRecord): number {
+  return record.clicks > 0 ? record.conversions / record.clicks : 0
+}
+
+export function calculateCostPerConversion(record: DailyRecord): number {
+  return record.conversions > 0 ? record.cost / record.conversions : 0
+}
+
+export function calculateRoas(record: DailyRecord): number {
+  return record.cost > 0 ? record.convertedValue / record.cost : 0
+}
+
+export function calculateCpm(record: DailyRecord): number {
+  return record.impressions > 0 ? (record.cost / record.impressions) * 1000 : 0
+}
+
 /**
  * Deriva todos os indicadores calculados a partir dos registros brutos.
  * Result7d e cumulativeResult dependem da ordem cronológica dos registros
@@ -48,6 +64,10 @@ export function computeRecords(records: DailyRecord[]): ComputedRecord[] {
       result7d: recentResults.reduce((sum, value) => sum + value, 0),
       cumulativeResult,
       dropoffRate: calculateDropoffRate(record),
+      conversionRate: calculateConversionRate(record),
+      costPerConversion: calculateCostPerConversion(record),
+      roas: calculateRoas(record),
+      cpm: calculateCpm(record),
     }
   })
 }

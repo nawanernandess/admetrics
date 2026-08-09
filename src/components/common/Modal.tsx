@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { ModalCloseContext } from '@/components/common/modalContext'
 
 const EXIT_ANIMATION_MS = 150
@@ -33,7 +34,7 @@ export function Modal({
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [requestClose])
 
-  return (
+  return createPortal(
     <ModalCloseContext.Provider value={requestClose}>
       <div
         className={`fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 ${
@@ -68,6 +69,7 @@ export function Modal({
           <div className="px-6 py-5">{children}</div>
         </div>
       </div>
-    </ModalCloseContext.Provider>
+    </ModalCloseContext.Provider>,
+    document.body,
   )
 }

@@ -28,6 +28,19 @@ export function formatPercent(value: number, digits = 1): string {
   return `${(value * 100).toFixed(digits)}%`
 }
 
+/** Para campos que o usuário já digita em unidades de porcentagem (ex.: parcela de impressões). */
+export function formatPercentRaw(value: number, digits = 1): string {
+  return `${value.toFixed(digits)}%`
+}
+
+export function formatRatio(value: number, digits = 2): string {
+  return `${value.toFixed(digits)}x`
+}
+
+export function formatSignedCurrency(value: number): string {
+  return `${value >= 0 ? '+' : ''}${formatCurrency(value)}`
+}
+
 function toLocalDate(iso: string): Date {
   return new Date(`${iso}T00:00:00`)
 }

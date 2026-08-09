@@ -10,9 +10,14 @@ export interface EncryptedRecordRow extends EncryptedPayload {
   productId: string
 }
 
+export interface EncryptedPreferenceRow extends EncryptedPayload {
+  id: string
+}
+
 export class AppDatabase extends Dexie {
   products!: Table<EncryptedProductRow, string>
   records!: Table<EncryptedRecordRow, string>
+  preferences!: Table<EncryptedPreferenceRow, string>
 
   constructor() {
     super('admetrics')
@@ -31,6 +36,12 @@ export class AppDatabase extends Dexie {
       registros: null,
       products: 'id',
       records: 'id, productId',
+    })
+
+    // v3: tabela de preferências do usuário (ex.: colunas visíveis/ordem na
+    // tabela de registros), mesmo padrão de payload criptografado.
+    this.version(3).stores({
+      preferences: 'id',
     })
   }
 }

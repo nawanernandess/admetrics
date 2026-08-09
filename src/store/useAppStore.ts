@@ -1,5 +1,6 @@
 import { create } from 'zustand'
-import { productRepository, recordRepository } from '@/lib/repo'
+import { preferenceRepository, productRepository, recordRepository } from '@/lib/repo'
+import { DEFAULT_VISIBLE_COLUMN_IDS } from '@/lib/columns'
 import type { DailyRecord, DailyRecordInput, Product, ProductInput } from '@/types'
 
 export type MainTab = 'dashboard' | 'records' | 'settings'
@@ -10,10 +11,12 @@ interface AppState {
   selectedProductId: string | null
   selectedTab: MainTab
   loading: boolean
+  recordsColumnIds: string[]
 
   loadData: () => Promise<void>
   selectProduct: (productId: string) => void
   selectTab: (tab: MainTab) => void
+  setRecordsColumnIds: (columnIds: string[]) => Promise<void>
   reset: () => void
 
   createProduct: (input: ProductInput) => Promise<Product>
@@ -31,6 +34,7 @@ const INITIAL_STATE = {
   selectedProductId: null as string | null,
   selectedTab: 'dashboard' as MainTab,
   loading: true,
+  recordsColumnIds: DEFAULT_VISIBLE_COLUMN_IDS,
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -52,7 +56,15 @@ export const useAppStore = create<AppState>((set, get) => ({
         ? currentProductId
         : (products[0]?.id ?? null)
 
-    set({ products, recordsByProduct, selectedProductId, loading: false })
+    const columnsPreference = await preferenceRepository.getRecordsColumns()
+
+    set({
+      products,
+      recordsByProduct,
+      selectedProductId,
+      loading: false,
+      recordsColumnIds: columnsPreference.visibleColumnIds,
+    })
   },
 
   selectProduct: (productId) => {
@@ -60,6 +72,11 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   selectTab: (tab) => set({ selectedTab: tab }),
+
+  setRecordsColumnIds: async (columnIds) => {
+    set({ recordsColumnIds: columnIds })
+    await preferenceRepository.setRecordsColumns({ visibleColumnIds: columnIds })
+  },
 
   reset: () => set({ ...INITIAL_STATE }),
 
