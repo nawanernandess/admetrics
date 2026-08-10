@@ -8,7 +8,7 @@ import {
   labelClass,
 } from '@/components/common/formStyles'
 import { useAppStore } from '@/store/useAppStore'
-import type { DailyRecordInput, Product } from '@/types'
+import type { DailyRecord, DailyRecordInput, Product } from '@/types'
 import { formatCurrency, formatDate, formatInt, formatPercentRaw } from '@/lib/format'
 import {
   CURRENCY_FIELDS,
@@ -18,6 +18,7 @@ import {
   buildRecordsFromRows,
   detectColumnMapping,
   readSpreadsheetFile,
+  splitByExistingDates,
   validateMappingAgainstData,
   type ColumnMapping,
   type ImportableField,
@@ -55,7 +56,13 @@ function formatFieldValue(field: ImportableField, record: DailyRecordInput): str
   return (value as string) || '—'
 }
 
-function ImportSpreadsheetContent({ product }: { product: Product }) {
+function ImportSpreadsheetContent({
+  product,
+  existingRecords,
+}: {
+  product: Product
+  existingRecords: DailyRecord[]
+}) {
   const createRecord = useAppStore((state) => state.createRecord)
   const requestClose = useRequestClose()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -140,6 +147,19 @@ function ImportSpreadsheetContent({ product }: { product: Product }) {
     })
   }, [dataRows, mapping, referenceYear, headers.length, product.strategy])
 
+  const existingDates = useMemo(
+    () => new Set(existingRecords.map((record) => record.date)),
+    [existingRecords],
+  )
+
+  const { newRows, duplicateRows } = useMemo(
+    () =>
+      importResult
+        ? splitByExistingDates(importResult.rows, existingDates)
+        : { newRows: [], duplicateRows: [] },
+    [importResult, existingDates],
+  )
+
   const mappedFields = FIELD_ORDER.filter((field) => mapping[field] != null)
   const rejectedFieldSet = new Set(rejected.map((r) => r.field))
   const unmappedFields = FIELD_ORDER.filter(
@@ -150,13 +170,13 @@ function ImportSpreadsheetContent({ product }: { product: Product }) {
     : 0
 
   async function handleImport() {
-    if (!importResult || importResult.rows.length === 0) return
+    if (newRows.length === 0) return
     setIsImporting(true)
-    for (const row of importResult.rows) {
+    for (const row of newRows) {
       await createRecord(product.id, row.record)
     }
     setIsImporting(false)
-    setImportedCount(importResult.rows.length)
+    setImportedCount(newRows.length)
   }
 
   if (importedCount != null) {
@@ -257,15 +277,17 @@ function ImportSpreadsheetContent({ product }: { product: Product }) {
               <div className="mb-1.5 flex items-center justify-between">
                 <span className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-secondary)]">
                   Pré-visualização
-                  {importResult
-                    ? ` (${importResult.rows.length} registro${importResult.rows.length === 1 ? '' : 's'})`
+                  {newRows.length > 0
+                    ? ` (${newRows.length} registro${newRows.length === 1 ? '' : 's'})`
                     : ''}
                 </span>
               </div>
               <div className="max-h-[280px] overflow-auto rounded-lg border border-[var(--color-card-border)]">
-                {!importResult || importResult.rows.length === 0 ? (
+                {newRows.length === 0 ? (
                   <p className="p-3 text-sm text-[var(--color-text-secondary)]">
-                    Nenhuma linha de dados reconhecida nesse arquivo.
+                    {duplicateRows.length > 0
+                      ? 'Todos os registros dessa planilha já foram importados antes — nada novo para adicionar.'
+                      : 'Nenhuma linha de dados reconhecida nesse arquivo.'}
                   </p>
                 ) : (
                   <table className="w-full text-xs">
@@ -279,7 +301,7 @@ function ImportSpreadsheetContent({ product }: { product: Product }) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--color-card-border)]">
-                      {importResult.rows.map((row, index) => (
+                      {newRows.map((row, index) => (
                         <tr key={index}>
                           {mappedFields.map((field) => (
                             <td key={field} className="whitespace-nowrap px-2 py-1.5 font-tabular">
@@ -305,6 +327,16 @@ function ImportSpreadsheetContent({ product }: { product: Product }) {
                 ? `${importResult.trimmedAfter} linha${importResult.trimmedAfter === 1 ? '' : 's'} sem atividade no final`
                 : ''}{' '}
               do arquivo foram ignoradas automaticamente (tudo zerado, sem dado real).
+            </p>
+          ) : null}
+          {duplicateRows.length > 0 ? (
+            <p className="text-xs text-[var(--color-text-secondary)]">
+              {duplicateRows.length}{' '}
+              {duplicateRows.length === 1
+                ? 'registro já havia sido importado'
+                : 'registros já haviam sido importados'}{' '}
+              (já existe um registro para essa data em &quot;{product.name}&quot;) — ignorado
+              {duplicateRows.length === 1 ? '' : 's'} automaticamente.
             </p>
           ) : null}
           {importResult && importResult.skipped.length > 0 ? (
@@ -386,12 +418,12 @@ function ImportSpreadsheetContent({ product }: { product: Product }) {
         <button
           type="button"
           onClick={handleImport}
-          disabled={!importResult || importResult.rows.length === 0 || isImporting}
+          disabled={newRows.length === 0 || isImporting}
           className={buttonPrimaryClass}
         >
           {isImporting
             ? 'Importando…'
-            : `Importar ${importResult?.rows.length ?? 0} registro${importResult?.rows.length === 1 ? '' : 's'}`}
+            : `Importar ${newRows.length} registro${newRows.length === 1 ? '' : 's'}`}
         </button>
       </div>
     </div>
@@ -400,9 +432,11 @@ function ImportSpreadsheetContent({ product }: { product: Product }) {
 
 export function ImportSpreadsheetModal({
   product,
+  existingRecords,
   onClose,
 }: {
   product: Product
+  existingRecords: DailyRecord[]
   onClose: () => void
 }) {
   return (
@@ -412,7 +446,7 @@ export function ImportSpreadsheetModal({
       onClose={onClose}
       widthClassName="max-w-4xl"
     >
-      <ImportSpreadsheetContent product={product} />
+      <ImportSpreadsheetContent product={product} existingRecords={existingRecords} />
     </Modal>
   )
 }

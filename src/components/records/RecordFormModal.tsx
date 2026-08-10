@@ -82,7 +82,7 @@ interface RecordFormProps {
 function RecordForm({ product, existingRecord }: RecordFormProps) {
   const createRecord = useAppStore((state) => state.createRecord)
   const updateRecord = useAppStore((state) => state.updateRecord)
-  const deleteRecord = useAppStore((state) => state.deleteRecord)
+  const deleteRecords = useAppStore((state) => state.deleteRecords)
   const requestClose = useRequestClose()
   const isEditing = Boolean(existingRecord)
 
@@ -128,7 +128,7 @@ function RecordForm({ product, existingRecord }: RecordFormProps) {
     if (!window.confirm('Excluir este registro? Esta ação não pode ser desfeita.')) {
       return
     }
-    await deleteRecord(existingRecord.id, product.id)
+    await deleteRecords([existingRecord.id], product.id)
     requestClose()
   }
 

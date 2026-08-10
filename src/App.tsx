@@ -115,6 +115,20 @@ function AuthenticatedApp() {
 
 function App() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  const isRestoring = useAuthStore((state) => state.isRestoring)
+  const restoreSession = useAuthStore((state) => state.restoreSession)
+
+  useEffect(() => {
+    restoreSession()
+  }, [restoreSession])
+
+  if (isRestoring) {
+    return (
+      <div className="flex h-screen items-center justify-center text-sm text-[var(--color-text-secondary)]">
+        Carregando…
+      </div>
+    )
+  }
 
   if (!isAuthenticated) {
     return <LoginScreen />

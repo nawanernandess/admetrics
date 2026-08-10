@@ -12,11 +12,13 @@ interface AppState {
   selectedTab: MainTab
   loading: boolean
   recordsColumnIds: string[]
+  recordsDateSortAsc: boolean
 
   loadData: () => Promise<void>
   selectProduct: (productId: string) => void
   selectTab: (tab: MainTab) => void
   setRecordsColumnIds: (columnIds: string[]) => Promise<void>
+  setRecordsDateSortAsc: (asc: boolean) => Promise<void>
   reset: () => void
 
   createProduct: (input: ProductInput) => Promise<Product>
@@ -25,7 +27,7 @@ interface AppState {
 
   createRecord: (productId: string, input: DailyRecordInput) => Promise<void>
   updateRecord: (id: string, productId: string, input: Partial<DailyRecordInput>) => Promise<void>
-  deleteRecord: (id: string, productId: string) => Promise<void>
+  deleteRecords: (ids: string[], productId: string) => Promise<void>
 }
 
 const INITIAL_STATE = {
@@ -35,6 +37,7 @@ const INITIAL_STATE = {
   selectedTab: 'dashboard' as MainTab,
   loading: true,
   recordsColumnIds: DEFAULT_VISIBLE_COLUMN_IDS,
+  recordsDateSortAsc: true,
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -57,6 +60,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         : (products[0]?.id ?? null)
 
     const columnsPreference = await preferenceRepository.getRecordsColumns()
+    const dateSortPreference = await preferenceRepository.getRecordsDateSort()
 
     set({
       products,
@@ -64,6 +68,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       selectedProductId,
       loading: false,
       recordsColumnIds: columnsPreference.visibleColumnIds,
+      recordsDateSortAsc: dateSortPreference.dateSortAsc,
     })
   },
 
@@ -76,6 +81,11 @@ export const useAppStore = create<AppState>((set, get) => ({
   setRecordsColumnIds: async (columnIds) => {
     set({ recordsColumnIds: columnIds })
     await preferenceRepository.setRecordsColumns({ visibleColumnIds: columnIds })
+  },
+
+  setRecordsDateSortAsc: async (asc) => {
+    set({ recordsDateSortAsc: asc })
+    await preferenceRepository.setRecordsDateSort({ dateSortAsc: asc })
   },
 
   reset: () => set({ ...INITIAL_STATE }),
@@ -133,12 +143,15 @@ export const useAppStore = create<AppState>((set, get) => ({
     }))
   },
 
-  deleteRecord: async (id, productId) => {
-    await recordRepository.remove(id)
+  deleteRecords: async (ids, productId) => {
+    await recordRepository.removeMany(ids)
+    const idSet = new Set(ids)
     set((state) => ({
       recordsByProduct: {
         ...state.recordsByProduct,
-        [productId]: (state.recordsByProduct[productId] ?? []).filter((record) => record.id !== id),
+        [productId]: (state.recordsByProduct[productId] ?? []).filter(
+          (record) => !idSet.has(record.id),
+        ),
       },
     }))
   },

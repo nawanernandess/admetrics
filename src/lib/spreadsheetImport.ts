@@ -484,6 +484,25 @@ export function buildRecordsFromRows(
   return { rows, skipped, trimmedBefore, trimmedAfter }
 }
 
+/**
+ * Compara as linhas já processadas contra as datas que o produto já tem
+ * registradas — evita duplicar um dia já importado antes. Só a data importa
+ * aqui: se já existe um registro para aquele dia, a linha da planilha é
+ * tratada como duplicata, mesmo que os demais valores tenham mudado.
+ */
+export function splitByExistingDates(
+  rows: ParsedImportRow[],
+  existingDates: ReadonlySet<string>,
+): { newRows: ParsedImportRow[]; duplicateRows: ParsedImportRow[] } {
+  const newRows: ParsedImportRow[] = []
+  const duplicateRows: ParsedImportRow[] = []
+  for (const row of rows) {
+    if (existingDates.has(row.record.date)) duplicateRows.push(row)
+    else newRows.push(row)
+  }
+  return { newRows, duplicateRows }
+}
+
 export { PERCENT_RAW_FIELDS, CURRENCY_FIELDS, INT_FIELDS }
 
 export interface ParsedSheet {

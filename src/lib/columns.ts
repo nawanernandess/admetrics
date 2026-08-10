@@ -177,6 +177,20 @@ export const DEFAULT_VISIBLE_COLUMN_IDS: string[] = [
   'note',
 ]
 
+const NOTE_COLUMN_WIDTH = 220
+const FALLBACK_COLUMN_WIDTH = 120
+
+/**
+ * Largura de fallback — o RecordsTab calcula a largura real de cada coluna
+ * pelo conteúdo (cabeçalho + valores atuais, ver `computeColumnAutoFitWidth`
+ * em RecordsTab.tsx), então isto só é usado para a coluna de Anotação (texto
+ * livre, largura fixa para poder quebrar linha) e como piso de segurança para
+ * qualquer coluna ainda sem largura calculada.
+ */
+export function getDefaultColumnWidth(column: ColumnDef): number {
+  return column.truncate ? NOTE_COLUMN_WIDTH : FALLBACK_COLUMN_WIDTH
+}
+
 /** Remove ids que não existem mais no catálogo e ids duplicados, preservando a ordem. */
 export function sanitizeColumnIds(ids: string[]): string[] {
   const seen = new Set<string>()

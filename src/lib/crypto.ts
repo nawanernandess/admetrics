@@ -44,9 +44,23 @@ export async function deriveEncryptionKey(password: string, salt: Uint8Array): P
     { name: 'PBKDF2', salt: salt as BufferSource, iterations: PBKDF2_ITERATIONS, hash: 'SHA-256' },
     baseKey,
     { name: 'AES-GCM', length: AES_KEY_LENGTH },
-    false,
+    true,
     ['encrypt', 'decrypt'],
   )
+}
+
+/** Exporta/reimporta a chave para poder guardá-la na sessionStorage entre reloads — ver `authSession.ts`. */
+export async function exportKeyToBase64(key: CryptoKey): Promise<string> {
+  const raw = await crypto.subtle.exportKey('raw', key)
+  return toBase64(raw)
+}
+
+export async function importKeyFromBase64(base64: string): Promise<CryptoKey> {
+  const raw = fromBase64(base64)
+  return crypto.subtle.importKey('raw', raw as BufferSource, 'AES-GCM', false, [
+    'encrypt',
+    'decrypt',
+  ])
 }
 
 export interface EncryptedPayload {

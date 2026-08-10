@@ -23,7 +23,7 @@ export interface RecordRepository {
   listByProduct(productId: string): Promise<DailyRecord[]>
   create(productId: string, input: DailyRecordInput): Promise<DailyRecord>
   update(id: string, input: Partial<DailyRecordInput>): Promise<void>
-  remove(id: string): Promise<void>
+  removeMany(ids: string[]): Promise<void>
 }
 
 class DexieProductRepository implements ProductRepository {
@@ -84,8 +84,8 @@ class DexieRecordRepository implements RecordRepository {
     await db.records.put({ id, productId: current.productId, ...payload })
   }
 
-  async remove(id: string): Promise<void> {
-    await db.records.delete(id)
+  async removeMany(ids: string[]): Promise<void> {
+    await db.records.bulkDelete(ids)
   }
 }
 
@@ -94,13 +94,22 @@ export const recordRepository: RecordRepository = new DexieRecordRepository()
 
 const RECORDS_COLUMNS_PREFERENCE_ID = 'records-table-columns'
 
+const RECORDS_DATE_SORT_PREFERENCE_ID = 'records-table-date-sort'
+
 export interface RecordsColumnsPreference {
   visibleColumnIds: string[]
+}
+
+/** dateSortAsc=true → do dia que iniciou para o dia que finalizou (crescente), o padrão. */
+export interface RecordsDateSortPreference {
+  dateSortAsc: boolean
 }
 
 export interface PreferenceRepository {
   getRecordsColumns(): Promise<RecordsColumnsPreference>
   setRecordsColumns(preference: RecordsColumnsPreference): Promise<void>
+  getRecordsDateSort(): Promise<RecordsDateSortPreference>
+  setRecordsDateSort(preference: RecordsDateSortPreference): Promise<void>
 }
 
 class DexiePreferenceRepository implements PreferenceRepository {
@@ -120,6 +129,20 @@ class DexiePreferenceRepository implements PreferenceRepository {
     const key = getEncryptionKey()
     const payload = await encryptJson(key, preference)
     await db.preferences.put({ id: RECORDS_COLUMNS_PREFERENCE_ID, ...payload })
+  }
+
+  async getRecordsDateSort(): Promise<RecordsDateSortPreference> {
+    const row = await db.preferences.get(RECORDS_DATE_SORT_PREFERENCE_ID)
+    if (!row) return { dateSortAsc: true }
+
+    const key = getEncryptionKey()
+    return decryptJson<RecordsDateSortPreference>(key, row)
+  }
+
+  async setRecordsDateSort(preference: RecordsDateSortPreference): Promise<void> {
+    const key = getEncryptionKey()
+    const payload = await encryptJson(key, preference)
+    await db.preferences.put({ id: RECORDS_DATE_SORT_PREFERENCE_ID, ...payload })
   }
 }
 
