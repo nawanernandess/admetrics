@@ -1,7 +1,12 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import type { ComputedRecord, DailyRecord, Product } from '@/types'
 import { computeRecords } from '@/lib/calculations'
-import { buttonPrimaryClass, buttonSecondaryClass } from '@/components/common/formStyles'
+import {
+  buttonDangerClass,
+  buttonDangerGhostClass,
+  buttonPrimaryClass,
+  buttonSecondaryClass,
+} from '@/components/common/formStyles'
 import {
   formatCurrency,
   formatDate,
@@ -16,6 +21,7 @@ import { StrategyBadge } from '@/components/common/Badge'
 import { EmptyState } from '@/components/common/EmptyState'
 import { RecordFormModal } from '@/components/records/RecordFormModal'
 import { ColumnsPanel } from '@/components/records/ColumnsPanel'
+import { ImportSpreadsheetModal } from '@/components/records/ImportSpreadsheetModal'
 import { useAppStore } from '@/store/useAppStore'
 
 function dropoffRateClasses(dropoffRate: number): string {
@@ -67,11 +73,57 @@ export function RecordsTab({ product, records }: { product: Product; records: Da
   const [editingRecord, setEditingRecord] = useState<DailyRecord | null>(null)
   const [isNewRecordModalOpen, setIsNewRecordModalOpen] = useState(false)
   const [isColumnsPanelOpen, setIsColumnsPanelOpen] = useState(false)
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
 
   const recordsColumnIds = useAppStore((state) => state.recordsColumnIds)
   const setRecordsColumnIds = useAppStore((state) => state.setRecordsColumnIds)
+  const deleteRecord = useAppStore((state) => state.deleteRecord)
 
   const computedRecords = useMemo(() => [...computeRecords(records)].reverse(), [records])
+
+  function toggleSelected(id: string) {
+    setSelectedIds((current) => {
+      const next = new Set(current)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  function toggleSelectAll() {
+    setSelectedIds((current) =>
+      current.size === computedRecords.length
+        ? new Set()
+        : new Set(computedRecords.map((record) => record.id)),
+    )
+  }
+
+  async function handleDeleteSelected() {
+    const count = selectedIds.size
+    if (count === 0) return
+    const confirmed = window.confirm(
+      `Excluir ${count} registro${count === 1 ? '' : 's'} selecionado${count === 1 ? '' : 's'}? Esta ação não pode ser desfeita.`,
+    )
+    if (!confirmed) return
+    for (const id of selectedIds) {
+      await deleteRecord(id, product.id)
+    }
+    setSelectedIds(new Set())
+  }
+
+  async function handleDeleteAll() {
+    const count = computedRecords.length
+    if (count === 0) return
+    const confirmed = window.confirm(
+      `Excluir todos os ${count} registros de "${product.name}"? Esta ação não pode ser desfeita.`,
+    )
+    if (!confirmed) return
+    for (const record of computedRecords) {
+      await deleteRecord(record.id, product.id)
+    }
+    setSelectedIds(new Set())
+  }
 
   const columns = useMemo(
     () =>
@@ -101,6 +153,22 @@ export function RecordsTab({ product, records }: { product: Product; records: Da
     </button>
   )
 
+  const importButton = (
+    <button
+      type="button"
+      onClick={() => setIsImportModalOpen(true)}
+      className={buttonSecondaryClass}
+    >
+      ⭱ Importar planilha
+    </button>
+  )
+
+  const deleteAllButton = (
+    <button type="button" onClick={handleDeleteAll} className={buttonDangerGhostClass}>
+      Excluir tudo
+    </button>
+  )
+
   const modals = (
     <>
       {editingRecord ? (
@@ -122,85 +190,144 @@ export function RecordsTab({ product, records }: { product: Product; records: Da
           onClose={() => setIsColumnsPanelOpen(false)}
         />
       ) : null}
+
+      {isImportModalOpen ? (
+        <ImportSpreadsheetModal product={product} onClose={() => setIsImportModalOpen(false)} />
+      ) : null}
     </>
   )
 
-  if (computedRecords.length === 0) {
-    return (
-      <div>
-        <EmptyState
-          title="Nenhum registro ainda"
-          description={`Clique em "+ Registrar dia" para lançar o primeiro dia de "${product.name}".`}
-          action={newRecordButton}
-        />
-        {modals}
-      </div>
-    )
-  }
-
   return (
     <div>
-      <div className="mb-4 flex justify-end gap-2">
-        {columnsButton}
-        {newRecordButton}
-      </div>
-
-      <div className="overflow-x-auto rounded-xl border border-[var(--color-card-border)]">
-        <table className="w-full border-collapse">
-          <thead style={{ backgroundColor: 'var(--color-header-dark)' }}>
-            <tr>
-              <th className={TH_CLASS}></th>
-              <th className={TH_CLASS}>Data</th>
-              {columns.map((column) => (
-                <th key={column.id} className={TH_CLASS}>
-                  {column.label}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[var(--color-card-border)] bg-white">
-            {computedRecords.map((record: ComputedRecord) => (
-              <tr key={record.id} className="transition-colors duration-150 hover:bg-slate-50">
-                <td className={`${TD_CLASS} text-center`}>
+      {computedRecords.length === 0 ? (
+        <EmptyState
+          title="Nenhum registro ainda"
+          description={`Clique em "+ Registrar dia" para lançar o primeiro dia de "${product.name}", ou importe o histórico de uma planilha.`}
+          action={
+            <div className="flex flex-wrap justify-center gap-2">
+              {importButton}
+              {newRecordButton}
+            </div>
+          }
+        />
+      ) : (
+        <>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+              {selectedIds.size > 0 ? (
+                <>
+                  <span className="text-sm text-[var(--color-text-secondary)]">
+                    {selectedIds.size} selecionado{selectedIds.size === 1 ? '' : 's'}
+                  </span>
                   <button
                     type="button"
-                    aria-label="Editar registro"
-                    onClick={() => setEditingRecord(record)}
-                    className="rounded-md p-1 text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-slate-200"
+                    onClick={handleDeleteSelected}
+                    className={buttonDangerClass}
                   >
-                    ✎
+                    Excluir selecionados
                   </button>
-                </td>
-                <td className={TD_CLASS}>{formatDate(record.date)}</td>
-                {columns.map((column) => {
-                  const isBadge = column.format === 'badge'
-                  const toneClass = columnToneClass(column, record)
-                  const cellClass = [
-                    TD_CLASS,
-                    isBadge ? 'font-sans' : '',
-                    toneClass ? `font-semibold ${toneClass}` : '',
-                    column.truncate
-                      ? 'max-w-[220px] truncate font-sans text-[var(--color-text-secondary)]'
-                      : '',
-                  ]
-                    .filter(Boolean)
-                    .join(' ')
+                  <button
+                    type="button"
+                    onClick={() => setSelectedIds(new Set())}
+                    className={buttonSecondaryClass}
+                  >
+                    Cancelar seleção
+                  </button>
+                </>
+              ) : null}
+            </div>
 
-                  return (
-                    <td
-                      key={column.id}
-                      className={cellClass}
-                      title={column.truncate ? (record[column.key] as string) : undefined}
-                    >
-                      {renderColumnCell(column, record)}
+            <div className="flex flex-wrap justify-end gap-2">
+              {columnsButton}
+              {importButton}
+              {deleteAllButton}
+              {newRecordButton}
+            </div>
+          </div>
+
+          <div className="overflow-x-auto rounded-xl border border-[var(--color-card-border)]">
+            <table className="w-full border-collapse">
+              <thead style={{ backgroundColor: 'var(--color-header-dark)' }}>
+                <tr>
+                  <th className={`${TH_CLASS} text-center`}>
+                    <input
+                      type="checkbox"
+                      aria-label="Selecionar todos os registros"
+                      checked={
+                        computedRecords.length > 0 && selectedIds.size === computedRecords.length
+                      }
+                      onChange={toggleSelectAll}
+                      className="h-4 w-4 rounded border-[var(--color-card-border)]"
+                    />
+                  </th>
+                  <th className={TH_CLASS}></th>
+                  <th className={TH_CLASS}>Data</th>
+                  {columns.map((column) => (
+                    <th key={column.id} className={TH_CLASS}>
+                      {column.label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[var(--color-card-border)] bg-white">
+                {computedRecords.map((record: ComputedRecord) => (
+                  <tr
+                    key={record.id}
+                    className={`transition-colors duration-150 hover:bg-slate-50 ${
+                      selectedIds.has(record.id) ? 'bg-[var(--color-accent-light)]/20' : ''
+                    }`}
+                  >
+                    <td className={`${TD_CLASS} text-center`}>
+                      <input
+                        type="checkbox"
+                        aria-label={`Selecionar registro de ${formatDate(record.date)}`}
+                        checked={selectedIds.has(record.id)}
+                        onChange={() => toggleSelected(record.id)}
+                        className="h-4 w-4 rounded border-[var(--color-card-border)]"
+                      />
                     </td>
-                  )
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                    <td className={`${TD_CLASS} text-center`}>
+                      <button
+                        type="button"
+                        aria-label="Editar registro"
+                        onClick={() => setEditingRecord(record)}
+                        className="rounded-md p-1 text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-slate-200"
+                      >
+                        ✎
+                      </button>
+                    </td>
+                    <td className={TD_CLASS}>{formatDate(record.date)}</td>
+                    {columns.map((column) => {
+                      const isBadge = column.format === 'badge'
+                      const toneClass = columnToneClass(column, record)
+                      const cellClass = [
+                        TD_CLASS,
+                        isBadge ? 'font-sans' : '',
+                        toneClass ? `font-semibold ${toneClass}` : '',
+                        column.truncate
+                          ? 'max-w-[220px] truncate font-sans text-[var(--color-text-secondary)]'
+                          : '',
+                      ]
+                        .filter(Boolean)
+                        .join(' ')
+
+                      return (
+                        <td
+                          key={column.id}
+                          className={cellClass}
+                          title={column.truncate ? (record[column.key] as string) : undefined}
+                        >
+                          {renderColumnCell(column, record)}
+                        </td>
+                      )
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
 
       {modals}
     </div>
