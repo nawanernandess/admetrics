@@ -14,10 +14,15 @@ export function calculateResult(record: DailyRecord): number {
   return record.convertedValue - record.cost
 }
 
-/** Fuga entre checkout iniciado e conversão concluída — a etapa final do funil. */
+/**
+ * Fuga entre o clique e a chegada na página de destino (bridge page) — fração
+ * dos cliques que não se converteram em Visitor. Confirmado comparando linha
+ * a linha com planilhas reais: "Taxa de fuga" = 1 - Visitors/Cliques (e o
+ * complemento é a "Taxa de passagem" da bridge page).
+ */
 export function calculateDropoffRate(record: DailyRecord): number {
-  if (record.checkouts <= 0) return 0
-  return (record.checkouts - record.conversions) / record.checkouts
+  if (record.clicks <= 0) return 0
+  return 1 - record.visitors / record.clicks
 }
 
 export function calculateConversionRate(record: DailyRecord): number {

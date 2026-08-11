@@ -1,0 +1,105 @@
+import {
+  Area,
+  CartesianGrid,
+  ComposedChart,
+  Line,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
+import type { ComputedRecord } from '@/types'
+import { formatDate, formatRatio } from '@/lib/format'
+import { getEdgeTicks, monthYearTickFormatter } from '@/lib/chartHelpers'
+
+function TooltipContent({
+  active,
+  payload,
+}: {
+  active?: boolean
+  payload?: Array<{ payload: ComputedRecord }>
+}) {
+  if (!active || !payload?.length) return null
+  const record = payload[0].payload
+  const isProfitable = record.roas >= 1
+  return (
+    <div className="rounded-lg border border-[var(--color-card-border)] bg-white px-3 py-2 text-xs shadow-lg">
+      <p className="font-medium text-[var(--color-text-primary)]">{formatDate(record.date)}</p>
+      <p
+        className={`font-tabular font-semibold ${
+          isProfitable ? 'text-[var(--color-positive-text)]' : 'text-[var(--color-negative-text)]'
+        }`}
+      >
+        ROAS: {formatRatio(record.roas)}
+      </p>
+    </div>
+  )
+}
+
+/** Retorno sobre o investimento (valor convertido / custo) — abaixo de 1x, o dia deu prejuízo. */
+export function RoasChart({ records }: { records: ComputedRecord[] }) {
+  const ticks = getEdgeTicks(records)
+
+  return (
+    <div className="animate-fade-in-up rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] p-4">
+      <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">ROAS</h3>
+      <div className="mt-3 h-64">
+        <ResponsiveContainer width="100%" height="100%">
+          <ComposedChart data={records} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
+            <defs>
+              <linearGradient id="roasFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="var(--color-positive-base)" stopOpacity={0.18} />
+                <stop offset="100%" stopColor="var(--color-positive-base)" stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid vertical={false} stroke="#eef0f3" />
+            <XAxis
+              dataKey="date"
+              ticks={ticks}
+              tickFormatter={monthYearTickFormatter}
+              tick={{ fontSize: 12, fill: 'var(--color-text-secondary)' }}
+              axisLine={{ stroke: '#eef0f3' }}
+              tickLine={false}
+            />
+            <YAxis
+              tickFormatter={(value: number) => formatRatio(value, 1)}
+              tick={{ fontSize: 11, fill: 'var(--color-text-secondary)' }}
+              axisLine={false}
+              tickLine={false}
+              width={48}
+            />
+            <ReferenceLine
+              y={1}
+              stroke="var(--color-text-secondary-2)"
+              strokeDasharray="4 4"
+              label={{
+                value: 'Ponto de equilíbrio',
+                position: 'insideTopRight',
+                fontSize: 11,
+                fill: 'var(--color-text-secondary)',
+              }}
+            />
+            <Tooltip content={<TooltipContent />} cursor={{ stroke: '#cbd5e1', strokeWidth: 1 }} />
+            <Area
+              type="monotone"
+              dataKey="roas"
+              stroke="none"
+              fill="url(#roasFill)"
+              isAnimationActive={false}
+            />
+            <Line
+              type="monotone"
+              dataKey="roas"
+              stroke="var(--color-positive-base)"
+              strokeWidth={2}
+              dot={{ r: 3, strokeWidth: 0, fill: 'var(--color-positive-base)' }}
+              activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }}
+              isAnimationActive={false}
+            />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  )
+}

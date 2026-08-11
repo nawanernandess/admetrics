@@ -1,11 +1,7 @@
 import { useMemo, useState, type PointerEvent as ReactPointerEvent, type ReactNode } from 'react'
 import type { ComputedRecord, DailyRecord, Product } from '@/types'
 import { computeRecords } from '@/lib/calculations'
-import {
-  buttonDangerClass,
-  buttonPrimaryClass,
-  buttonSecondaryClass,
-} from '@/components/common/formStyles'
+import { buttonDangerClass, buttonSecondaryClass } from '@/components/common/formStyles'
 import {
   formatCurrency,
   formatDate,
@@ -197,7 +193,6 @@ function renderColumnCell(column: ColumnDef, record: ComputedRecord): ReactNode 
 
 export function RecordsTab({ product, records }: { product: Product; records: DailyRecord[] }) {
   const [editingRecord, setEditingRecord] = useState<DailyRecord | null>(null)
-  const [isNewRecordModalOpen, setIsNewRecordModalOpen] = useState(false)
   const [isColumnsPanelOpen, setIsColumnsPanelOpen] = useState(false)
   const [isImportModalOpen, setIsImportModalOpen] = useState(false)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
@@ -285,16 +280,6 @@ export function RecordsTab({ product, records }: { product: Product; records: Da
     dateColumnWidth +
     columns.reduce((sum, column) => sum + getColumnWidth(column), 0)
 
-  const newRecordButton = (
-    <button
-      type="button"
-      onClick={() => setIsNewRecordModalOpen(true)}
-      className={buttonPrimaryClass}
-    >
-      + Registrar dia
-    </button>
-  )
-
   const columnsButton = (
     <button
       type="button"
@@ -325,10 +310,6 @@ export function RecordsTab({ product, records }: { product: Product; records: Da
         />
       ) : null}
 
-      {isNewRecordModalOpen ? (
-        <RecordFormModal product={product} onClose={() => setIsNewRecordModalOpen(false)} />
-      ) : null}
-
       {isColumnsPanelOpen ? (
         <ColumnsPanel
           visibleColumnIds={recordsColumnIds}
@@ -353,12 +334,7 @@ export function RecordsTab({ product, records }: { product: Product; records: Da
         <EmptyState
           title="Nenhum registro ainda"
           description={`Clique em "+ Registrar dia" para lançar o primeiro dia de "${product.name}", ou importe o histórico de uma planilha.`}
-          action={
-            <div className="flex flex-wrap justify-center gap-2">
-              {importButton}
-              {newRecordButton}
-            </div>
-          }
+          action={<div className="flex flex-wrap justify-center gap-2">{importButton}</div>}
         />
       ) : (
         <>
@@ -390,7 +366,6 @@ export function RecordsTab({ product, records }: { product: Product; records: Da
             <div className="flex flex-wrap justify-end gap-2">
               {columnsButton}
               {importButton}
-              {newRecordButton}
             </div>
           </div>
 

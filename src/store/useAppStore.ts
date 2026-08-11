@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { preferenceRepository, productRepository, recordRepository } from '@/lib/repo'
 import { DEFAULT_VISIBLE_COLUMN_IDS } from '@/lib/columns'
+import { DEFAULT_VISIBLE_DASHBOARD_CHART_IDS } from '@/lib/dashboardCharts'
 import type { DailyRecord, DailyRecordInput, Product, ProductInput } from '@/types'
 
 export type MainTab = 'dashboard' | 'records' | 'settings'
@@ -13,12 +14,14 @@ interface AppState {
   loading: boolean
   recordsColumnIds: string[]
   recordsDateSortAsc: boolean
+  dashboardChartIds: string[]
 
   loadData: () => Promise<void>
   selectProduct: (productId: string) => void
   selectTab: (tab: MainTab) => void
   setRecordsColumnIds: (columnIds: string[]) => Promise<void>
   setRecordsDateSortAsc: (asc: boolean) => Promise<void>
+  setDashboardChartIds: (chartIds: string[]) => Promise<void>
   reset: () => void
 
   createProduct: (input: ProductInput) => Promise<Product>
@@ -38,6 +41,7 @@ const INITIAL_STATE = {
   loading: true,
   recordsColumnIds: DEFAULT_VISIBLE_COLUMN_IDS,
   recordsDateSortAsc: true,
+  dashboardChartIds: DEFAULT_VISIBLE_DASHBOARD_CHART_IDS,
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -61,6 +65,7 @@ export const useAppStore = create<AppState>((set, get) => ({
 
     const columnsPreference = await preferenceRepository.getRecordsColumns()
     const dateSortPreference = await preferenceRepository.getRecordsDateSort()
+    const dashboardChartsPreference = await preferenceRepository.getDashboardCharts()
 
     set({
       products,
@@ -69,6 +74,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       loading: false,
       recordsColumnIds: columnsPreference.visibleColumnIds,
       recordsDateSortAsc: dateSortPreference.dateSortAsc,
+      dashboardChartIds: dashboardChartsPreference.visibleChartIds,
     })
   },
 
@@ -86,6 +92,11 @@ export const useAppStore = create<AppState>((set, get) => ({
   setRecordsDateSortAsc: async (asc) => {
     set({ recordsDateSortAsc: asc })
     await preferenceRepository.setRecordsDateSort({ dateSortAsc: asc })
+  },
+
+  setDashboardChartIds: async (chartIds) => {
+    set({ dashboardChartIds: chartIds })
+    await preferenceRepository.setDashboardCharts({ visibleChartIds: chartIds })
   },
 
   reset: () => set({ ...INITIAL_STATE }),

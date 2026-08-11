@@ -3,6 +3,10 @@ import { db } from '@/lib/db'
 import { decryptJson, encryptJson } from '@/lib/crypto'
 import { getEncryptionKey } from '@/lib/authSession'
 import { DEFAULT_VISIBLE_COLUMN_IDS, sanitizeColumnIds } from '@/lib/columns'
+import {
+  DEFAULT_VISIBLE_DASHBOARD_CHART_IDS,
+  sanitizeDashboardChartIds,
+} from '@/lib/dashboardCharts'
 import type { DailyRecord, DailyRecordInput, Product, ProductInput } from '@/types'
 
 /**
@@ -96,6 +100,8 @@ const RECORDS_COLUMNS_PREFERENCE_ID = 'records-table-columns'
 
 const RECORDS_DATE_SORT_PREFERENCE_ID = 'records-table-date-sort'
 
+const DASHBOARD_CHARTS_PREFERENCE_ID = 'dashboard-charts'
+
 export interface RecordsColumnsPreference {
   visibleColumnIds: string[]
 }
@@ -105,11 +111,17 @@ export interface RecordsDateSortPreference {
   dateSortAsc: boolean
 }
 
+export interface DashboardChartsPreference {
+  visibleChartIds: string[]
+}
+
 export interface PreferenceRepository {
   getRecordsColumns(): Promise<RecordsColumnsPreference>
   setRecordsColumns(preference: RecordsColumnsPreference): Promise<void>
   getRecordsDateSort(): Promise<RecordsDateSortPreference>
   setRecordsDateSort(preference: RecordsDateSortPreference): Promise<void>
+  getDashboardCharts(): Promise<DashboardChartsPreference>
+  setDashboardCharts(preference: DashboardChartsPreference): Promise<void>
 }
 
 class DexiePreferenceRepository implements PreferenceRepository {
@@ -143,6 +155,25 @@ class DexiePreferenceRepository implements PreferenceRepository {
     const key = getEncryptionKey()
     const payload = await encryptJson(key, preference)
     await db.preferences.put({ id: RECORDS_DATE_SORT_PREFERENCE_ID, ...payload })
+  }
+
+  async getDashboardCharts(): Promise<DashboardChartsPreference> {
+    const row = await db.preferences.get(DASHBOARD_CHARTS_PREFERENCE_ID)
+    if (!row) return { visibleChartIds: DEFAULT_VISIBLE_DASHBOARD_CHART_IDS }
+
+    const key = getEncryptionKey()
+    const preference = await decryptJson<DashboardChartsPreference>(key, row)
+    const visibleChartIds = sanitizeDashboardChartIds(preference.visibleChartIds)
+    return {
+      visibleChartIds:
+        visibleChartIds.length > 0 ? visibleChartIds : DEFAULT_VISIBLE_DASHBOARD_CHART_IDS,
+    }
+  }
+
+  async setDashboardCharts(preference: DashboardChartsPreference): Promise<void> {
+    const key = getEncryptionKey()
+    const payload = await encryptJson(key, preference)
+    await db.preferences.put({ id: DASHBOARD_CHARTS_PREFERENCE_ID, ...payload })
   }
 }
 

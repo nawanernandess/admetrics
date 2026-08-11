@@ -79,6 +79,10 @@ const FIELD_ALIASES: Record<ImportableField, string[]> = {
     'primeiro acima',
     'parc 1 anuncio',
     'perc 1 anuncio',
+    'parc 1 acima',
+    'perc 1 acima',
+    'parc 1o acima',
+    'perc 1o acima',
   ],
   impressionShare: [
     'parc impressoes',
@@ -412,6 +416,12 @@ function trimEdgeRowsWithoutActivity(
   })
 
   if (first === -1) return { rows: dataRows, trimmedBefore: 0, trimmedAfter: 0 }
+  while (first > 0 && rowHasActivity(dataRows[first - 1], mapping, 1)) {
+    first -= 1
+  }
+  while (last < dataRows.length - 1 && rowHasActivity(dataRows[last + 1], mapping, 1)) {
+    last += 1
+  }
 
   return {
     rows: dataRows.slice(first, last + 1),

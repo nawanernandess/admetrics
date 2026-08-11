@@ -1,9 +1,10 @@
 import {
   Bar,
-  BarChart,
   CartesianGrid,
   Cell,
-  ReferenceLine,
+  ComposedChart,
+  Legend,
+  Line,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -22,31 +23,39 @@ function TooltipContent({
 }) {
   if (!active || !payload?.length) return null
   const record = payload[0].payload
-  const isPositive = record.result >= 0
+  const isOverBudget = record.cost > record.dailyBudget
   return (
     <div className="rounded-lg border border-[var(--color-card-border)] bg-white px-3 py-2 text-xs shadow-lg">
       <p className="font-medium text-[var(--color-text-primary)]">{formatDate(record.date)}</p>
       <p
         className={`font-tabular font-semibold ${
-          isPositive ? 'text-[var(--color-positive-text)]' : 'text-[var(--color-negative-text)]'
+          isOverBudget ? 'text-[var(--color-negative-text)]' : 'text-[var(--color-positive-text)]'
         }`}
       >
-        {isPositive ? '+' : ''}
-        {formatCurrency(record.result)}
+        Custo: {formatCurrency(record.cost)}
+      </p>
+      <p className="font-tabular text-[var(--color-text-secondary)]">
+        Orçamento diário:{' '}
+        <span className="font-semibold text-[var(--color-text-primary)]">
+          {formatCurrency(record.dailyBudget)}
+        </span>
       </p>
     </div>
   )
 }
 
-export function DailyResultChart({ records }: { records: ComputedRecord[] }) {
+/** Ritmo de gasto — custo real do dia (barra) contra o orçamento diário definido (linha). */
+export function BudgetPacingChart({ records }: { records: ComputedRecord[] }) {
   const ticks = getEdgeTicks(records)
 
   return (
     <div className="animate-fade-in-up rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] p-4">
-      <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Resultado diário</h3>
+      <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
+        Orçamento × custo real
+      </h3>
       <div className="mt-3 h-64">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={records} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
+          <ComposedChart data={records} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
             <CartesianGrid vertical={false} stroke="#eef0f3" />
             <XAxis
               dataKey="date"
@@ -61,21 +70,43 @@ export function DailyResultChart({ records }: { records: ComputedRecord[] }) {
               tick={{ fontSize: 11, fill: 'var(--color-text-secondary)' }}
               axisLine={false}
               tickLine={false}
-              width={80}
+              width={72}
             />
-            <ReferenceLine y={0} stroke="var(--color-text-secondary-2)" strokeWidth={1.5} />
             <Tooltip content={<TooltipContent />} cursor={{ fill: '#f1f5f9' }} />
-            <Bar dataKey="result" radius={4} maxBarSize={18} isAnimationActive={false}>
+            <Legend
+              formatter={(value: string) => (
+                <span className="text-xs text-[var(--color-text-secondary)]">{value}</span>
+              )}
+            />
+            <Bar
+              dataKey="cost"
+              name="Custo do dia"
+              radius={[4, 4, 0, 0]}
+              maxBarSize={20}
+              isAnimationActive={false}
+            >
               {records.map((record) => (
                 <Cell
                   key={record.id}
                   fill={
-                    record.result >= 0 ? 'var(--color-positive-base)' : 'var(--color-negative-base)'
+                    record.cost > record.dailyBudget
+                      ? 'var(--color-negative-base)'
+                      : 'var(--color-positive-base)'
                   }
                 />
               ))}
             </Bar>
-          </BarChart>
+            <Line
+              type="stepAfter"
+              dataKey="dailyBudget"
+              name="Orçamento diário"
+              stroke="var(--color-warning-text)"
+              strokeWidth={2}
+              strokeDasharray="4 4"
+              dot={false}
+              isAnimationActive={false}
+            />
+          </ComposedChart>
         </ResponsiveContainer>
       </div>
     </div>
