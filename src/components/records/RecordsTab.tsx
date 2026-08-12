@@ -364,8 +364,8 @@ export function RecordsTab({ product, records }: { product: Product; records: Da
             </div>
 
             <div className="flex flex-wrap justify-end gap-2">
-              {columnsButton}
               {importButton}
+              {columnsButton}
             </div>
           </div>
 
@@ -426,7 +426,11 @@ export function RecordsTab({ product, records }: { product: Product; records: Da
                   <tr
                     key={record.id}
                     className={`transition-colors duration-150 hover:bg-slate-50 ${
-                      selectedIds.has(record.id) ? 'bg-[var(--color-accent-light)]/20' : ''
+                      selectedIds.has(record.id)
+                        ? 'bg-[var(--color-accent-light)]/20'
+                        : record.conversions > 0
+                          ? 'bg-[var(--color-positive-bg)]'
+                          : ''
                     }`}
                   >
                     <td className={`${TD_CLASS} text-center`}>

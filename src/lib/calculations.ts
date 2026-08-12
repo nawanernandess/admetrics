@@ -100,40 +100,6 @@ export function aggregateKpis(records: ComputedRecord[]): AggregatedKpis {
   )
 }
 
-export interface FunnelStage {
-  stage: string
-  value: number
-  percentage: number
-}
-
-export function aggregateFunnel(records: ComputedRecord[]): FunnelStage[] {
-  const totals = records.reduce(
-    (acc, r) => ({
-      impressions: acc.impressions + r.impressions,
-      clicks: acc.clicks + r.clicks,
-      visitors: acc.visitors + r.visitors,
-      checkouts: acc.checkouts + r.checkouts,
-      conversions: acc.conversions + r.conversions,
-    }),
-    { impressions: 0, clicks: 0, visitors: 0, checkouts: 0, conversions: 0 },
-  )
-
-  const base = totals.impressions
-  const stages: Array<[string, number]> = [
-    ['Impressões', totals.impressions],
-    ['Cliques', totals.clicks],
-    ['Visitors', totals.visitors],
-    ['Checkouts', totals.checkouts],
-    ['Conversões', totals.conversions],
-  ]
-
-  return stages.map(([stage, value]) => ({
-    stage,
-    value,
-    percentage: base > 0 ? value / base : 0,
-  }))
-}
-
 export interface PeriodInfo {
   totalDays: number
   start: string | null

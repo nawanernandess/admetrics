@@ -1,5 +1,4 @@
 import type { ComputedRecord } from '@/types'
-import { formatMonthYear } from '@/lib/format'
 
 /** Garante que o eixo temporal mostre o mês inicial à esquerda e o mês final à direita. */
 export function getEdgeTicks(records: ComputedRecord[]): string[] {
@@ -9,6 +8,7 @@ export function getEdgeTicks(records: ComputedRecord[]): string[] {
   return first === last ? [first] : [first, last]
 }
 
-export function monthYearTickFormatter(date: string): string {
-  return formatMonthYear(date)
+/** Mantém o espaço do eixo (mesmo layout de antes) sem exibir o texto da data. */
+export function blankTickFormatter(): string {
+  return ' '
 }

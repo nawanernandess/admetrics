@@ -4,8 +4,10 @@ import { decryptJson, encryptJson } from '@/lib/crypto'
 import { getEncryptionKey } from '@/lib/authSession'
 import { DEFAULT_VISIBLE_COLUMN_IDS, sanitizeColumnIds } from '@/lib/columns'
 import {
+  DEFAULT_FULL_WIDTH_DASHBOARD_CHART_IDS,
   DEFAULT_VISIBLE_DASHBOARD_CHART_IDS,
   sanitizeDashboardChartIds,
+  sanitizeFullWidthChartIds,
 } from '@/lib/dashboardCharts'
 import type { DailyRecord, DailyRecordInput, Product, ProductInput } from '@/types'
 
@@ -113,6 +115,7 @@ export interface RecordsDateSortPreference {
 
 export interface DashboardChartsPreference {
   visibleChartIds: string[]
+  fullWidthChartIds: string[]
 }
 
 export interface PreferenceRepository {
@@ -159,14 +162,25 @@ class DexiePreferenceRepository implements PreferenceRepository {
 
   async getDashboardCharts(): Promise<DashboardChartsPreference> {
     const row = await db.preferences.get(DASHBOARD_CHARTS_PREFERENCE_ID)
-    if (!row) return { visibleChartIds: DEFAULT_VISIBLE_DASHBOARD_CHART_IDS }
+    if (!row) {
+      return {
+        visibleChartIds: DEFAULT_VISIBLE_DASHBOARD_CHART_IDS,
+        fullWidthChartIds: DEFAULT_FULL_WIDTH_DASHBOARD_CHART_IDS,
+      }
+    }
 
     const key = getEncryptionKey()
-    const preference = await decryptJson<DashboardChartsPreference>(key, row)
-    const visibleChartIds = sanitizeDashboardChartIds(preference.visibleChartIds)
+    const preference = await decryptJson<Partial<DashboardChartsPreference>>(key, row)
+    const visibleChartIds = sanitizeDashboardChartIds(preference.visibleChartIds ?? [])
+    // undefined (nunca salvo) usa o padrão; [] explícito (usuário desmarcou tudo) é respeitado.
+    const fullWidthChartIds =
+      preference.fullWidthChartIds == null
+        ? DEFAULT_FULL_WIDTH_DASHBOARD_CHART_IDS
+        : sanitizeFullWidthChartIds(preference.fullWidthChartIds)
     return {
       visibleChartIds:
         visibleChartIds.length > 0 ? visibleChartIds : DEFAULT_VISIBLE_DASHBOARD_CHART_IDS,
+      fullWidthChartIds,
     }
   }
 

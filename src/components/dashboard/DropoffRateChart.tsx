@@ -10,6 +10,7 @@ import {
 } from 'recharts'
 import type { ComputedRecord } from '@/types'
 import { formatDate, formatPercent } from '@/lib/format'
+import { blankTickFormatter, getEdgeTicks } from '@/lib/chartHelpers'
 
 function TooltipContent({
   active,
@@ -36,6 +37,8 @@ function TooltipContent({
  * limiar usado para colorir a coluna "Taxa de fuga" na tabela de registros.
  */
 export function DropoffRateChart({ records }: { records: ComputedRecord[] }) {
+  const ticks = getEdgeTicks(records)
+
   return (
     <div className="animate-fade-in-up rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] p-4">
       <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Taxa de fuga</h3>
@@ -43,7 +46,14 @@ export function DropoffRateChart({ records }: { records: ComputedRecord[] }) {
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={records} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="4 4" stroke="#eef0f3" />
-            <XAxis dataKey="date" hide />
+            <XAxis
+              dataKey="date"
+              ticks={ticks}
+              tickFormatter={blankTickFormatter}
+              tick={{ fontSize: 12, fill: 'var(--color-text-secondary)' }}
+              axisLine={{ stroke: '#eef0f3' }}
+              tickLine={false}
+            />
             <YAxis
               tickFormatter={(value: number) => formatPercent(value, 0)}
               tick={{ fontSize: 11, fill: 'var(--color-text-secondary)' }}

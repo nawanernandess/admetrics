@@ -1,7 +1,10 @@
 import { create } from 'zustand'
 import { preferenceRepository, productRepository, recordRepository } from '@/lib/repo'
 import { DEFAULT_VISIBLE_COLUMN_IDS } from '@/lib/columns'
-import { DEFAULT_VISIBLE_DASHBOARD_CHART_IDS } from '@/lib/dashboardCharts'
+import {
+  DEFAULT_FULL_WIDTH_DASHBOARD_CHART_IDS,
+  DEFAULT_VISIBLE_DASHBOARD_CHART_IDS,
+} from '@/lib/dashboardCharts'
 import type { DailyRecord, DailyRecordInput, Product, ProductInput } from '@/types'
 
 export type MainTab = 'dashboard' | 'records' | 'settings'
@@ -15,13 +18,14 @@ interface AppState {
   recordsColumnIds: string[]
   recordsDateSortAsc: boolean
   dashboardChartIds: string[]
+  dashboardFullWidthChartIds: string[]
 
   loadData: () => Promise<void>
   selectProduct: (productId: string) => void
   selectTab: (tab: MainTab) => void
   setRecordsColumnIds: (columnIds: string[]) => Promise<void>
   setRecordsDateSortAsc: (asc: boolean) => Promise<void>
-  setDashboardChartIds: (chartIds: string[]) => Promise<void>
+  setDashboardCharts: (chartIds: string[], fullWidthChartIds: string[]) => Promise<void>
   reset: () => void
 
   createProduct: (input: ProductInput) => Promise<Product>
@@ -42,6 +46,7 @@ const INITIAL_STATE = {
   recordsColumnIds: DEFAULT_VISIBLE_COLUMN_IDS,
   recordsDateSortAsc: true,
   dashboardChartIds: DEFAULT_VISIBLE_DASHBOARD_CHART_IDS,
+  dashboardFullWidthChartIds: DEFAULT_FULL_WIDTH_DASHBOARD_CHART_IDS,
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -75,6 +80,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       recordsColumnIds: columnsPreference.visibleColumnIds,
       recordsDateSortAsc: dateSortPreference.dateSortAsc,
       dashboardChartIds: dashboardChartsPreference.visibleChartIds,
+      dashboardFullWidthChartIds: dashboardChartsPreference.fullWidthChartIds,
     })
   },
 
@@ -94,9 +100,12 @@ export const useAppStore = create<AppState>((set, get) => ({
     await preferenceRepository.setRecordsDateSort({ dateSortAsc: asc })
   },
 
-  setDashboardChartIds: async (chartIds) => {
-    set({ dashboardChartIds: chartIds })
-    await preferenceRepository.setDashboardCharts({ visibleChartIds: chartIds })
+  setDashboardCharts: async (chartIds, fullWidthChartIds) => {
+    set({ dashboardChartIds: chartIds, dashboardFullWidthChartIds: fullWidthChartIds })
+    await preferenceRepository.setDashboardCharts({
+      visibleChartIds: chartIds,
+      fullWidthChartIds,
+    })
   },
 
   reset: () => set({ ...INITIAL_STATE }),

@@ -1,20 +1,20 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import type { ComputedRecord, DailyRecord, Product } from '@/types'
 import {
-  aggregateFunnel,
   aggregateKpis,
   calculatePeriod,
   computeRecords,
-  type FunnelStage,
   type PeriodInfo,
 } from '@/lib/calculations'
 import { useAppStore } from '@/store/useAppStore'
-import { computeDashboardChartLayout, sanitizeDashboardChartIds } from '@/lib/dashboardCharts'
+import {
+  computeDashboardChartLayout,
+  sanitizeDashboardChartIds,
+  sanitizeFullWidthChartIds,
+} from '@/lib/dashboardCharts'
 import { PeriodBanner } from '@/components/dashboard/PeriodBanner'
 import { KpiCards } from '@/components/dashboard/KpiCards'
 import { DashboardChartsPanel } from '@/components/dashboard/DashboardChartsPanel'
-import { CumulativeResultChart } from '@/components/dashboard/CumulativeResultChart'
-import { FunnelChart } from '@/components/dashboard/FunnelChart'
 import { CtrCpcChart } from '@/components/dashboard/CtrCpcChart'
 import { ConversionRateChart } from '@/components/dashboard/ConversionRateChart'
 import { RoasChart } from '@/components/dashboard/RoasChart'
@@ -29,13 +29,10 @@ import { buttonSecondaryClass } from '@/components/common/formStyles'
 
 interface ChartContext {
   records: ComputedRecord[]
-  funnel: FunnelStage[]
   period: PeriodInfo
 }
 
 const CHART_COMPONENTS: Record<string, (context: ChartContext) => ReactNode> = {
-  cumulativeResult: ({ records }) => <CumulativeResultChart records={records} />,
-  funnel: ({ funnel, period }) => <FunnelChart stages={funnel} period={period} />,
   ctrCpc: ({ records }) => <CtrCpcChart records={records} />,
   conversionRate: ({ records }) => <ConversionRateChart records={records} />,
   roas: ({ records }) => <RoasChart records={records} />,
@@ -50,15 +47,22 @@ const CHART_COMPONENTS: Record<string, (context: ChartContext) => ReactNode> = {
 export function DashboardTab({ product, records }: { product: Product; records: DailyRecord[] }) {
   const [isChartsPanelOpen, setIsChartsPanelOpen] = useState(false)
   const dashboardChartIds = useAppStore((state) => state.dashboardChartIds)
-  const setDashboardChartIds = useAppStore((state) => state.setDashboardChartIds)
+  const dashboardFullWidthChartIds = useAppStore((state) => state.dashboardFullWidthChartIds)
+  const setDashboardCharts = useAppStore((state) => state.setDashboardCharts)
 
   const computedRecords = useMemo(() => computeRecords(records), [records])
   const kpis = useMemo(() => aggregateKpis(computedRecords), [computedRecords])
-  const funnel = useMemo(() => aggregateFunnel(computedRecords), [computedRecords])
   const period = useMemo(() => calculatePeriod(computedRecords), [computedRecords])
   const chartIds = useMemo(() => sanitizeDashboardChartIds(dashboardChartIds), [dashboardChartIds])
-  const chartLayout = useMemo(() => computeDashboardChartLayout(chartIds), [chartIds])
-  const chartContext: ChartContext = { records: computedRecords, funnel, period }
+  const fullWidthChartIds = useMemo(
+    () => sanitizeFullWidthChartIds(dashboardFullWidthChartIds),
+    [dashboardFullWidthChartIds],
+  )
+  const chartLayout = useMemo(
+    () => computeDashboardChartLayout(chartIds, fullWidthChartIds),
+    [chartIds, fullWidthChartIds],
+  )
+  const chartContext: ChartContext = { records: computedRecords, period }
 
   if (computedRecords.length === 0) {
     return (
@@ -101,7 +105,10 @@ export function DashboardTab({ product, records }: { product: Product; records: 
       {isChartsPanelOpen ? (
         <DashboardChartsPanel
           visibleChartIds={chartIds}
-          onApply={(newChartIds) => setDashboardChartIds(newChartIds)}
+          fullWidthChartIds={fullWidthChartIds}
+          onApply={(newChartIds, newFullWidthChartIds) =>
+            setDashboardCharts(newChartIds, newFullWidthChartIds)
+          }
           onClose={() => setIsChartsPanelOpen(false)}
         />
       ) : null}

@@ -27,6 +27,7 @@ import {
   DASHBOARD_CHART_DEFS,
   DASHBOARD_CHART_DEFS_BY_ID,
   DASHBOARD_CHART_GROUPS,
+  DEFAULT_FULL_WIDTH_DASHBOARD_CHART_IDS,
   DEFAULT_VISIBLE_DASHBOARD_CHART_IDS,
 } from '@/lib/dashboardCharts'
 
@@ -34,11 +35,13 @@ function SortableChartRow({
   id,
   label,
   fullWidth,
+  onToggleFullWidth,
   onRemove,
 }: {
   id: string
   label: string
-  fullWidth?: boolean
+  fullWidth: boolean
+  onToggleFullWidth: () => void
   onRemove: () => void
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -67,11 +70,19 @@ function SortableChartRow({
         ⠿
       </button>
       <span className="flex-1 truncate">{label}</span>
-      {fullWidth ? (
-        <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-[var(--color-text-secondary)]">
-          linha inteira
-        </span>
-      ) : null}
+      <button
+        type="button"
+        onClick={onToggleFullWidth}
+        aria-pressed={fullWidth}
+        title={`Clique para ${fullWidth ? 'usar meia linha' : 'usar linha inteira'}`}
+        className={`cursor-pointer rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide transition-colors duration-150 ${
+          fullWidth
+            ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent)]'
+            : 'bg-slate-100 text-[var(--color-text-secondary)] hover:bg-slate-200'
+        }`}
+      >
+        {fullWidth ? 'linha inteira' : 'meia linha'}
+      </button>
       <button
         type="button"
         onClick={onRemove}
@@ -86,14 +97,17 @@ function SortableChartRow({
 
 interface DashboardChartsPanelContentProps {
   visibleChartIds: string[]
-  onApply: (chartIds: string[]) => void
+  fullWidthChartIds: string[]
+  onApply: (chartIds: string[], fullWidthChartIds: string[]) => void
 }
 
 function DashboardChartsPanelContent({
   visibleChartIds,
+  fullWidthChartIds,
   onApply,
 }: DashboardChartsPanelContentProps) {
   const [draftIds, setDraftIds] = useState<string[]>(visibleChartIds)
+  const [draftFullWidthIds, setDraftFullWidthIds] = useState<string[]>(fullWidthChartIds)
   const requestClose = useRequestClose()
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
@@ -101,9 +115,16 @@ function DashboardChartsPanelContent({
   )
 
   const selectedIds = new Set(draftIds)
+  const fullWidthIds = new Set(draftFullWidthIds)
 
   function toggleChart(id: string) {
     setDraftIds((current) =>
+      current.includes(id) ? current.filter((chartId) => chartId !== id) : [...current, id],
+    )
+  }
+
+  function toggleFullWidth(id: string) {
+    setDraftFullWidthIds((current) =>
       current.includes(id) ? current.filter((chartId) => chartId !== id) : [...current, id],
     )
   }
@@ -124,12 +145,13 @@ function DashboardChartsPanelContent({
   }
 
   function handleApply() {
-    onApply(draftIds)
+    onApply(draftIds, draftFullWidthIds)
     requestClose()
   }
 
   function handleRestoreDefault() {
     setDraftIds(DEFAULT_VISIBLE_DASHBOARD_CHART_IDS)
+    setDraftFullWidthIds(DEFAULT_FULL_WIDTH_DASHBOARD_CHART_IDS)
   }
 
   return (
@@ -191,7 +213,8 @@ function DashboardChartsPanelContent({
                         key={id}
                         id={id}
                         label={DASHBOARD_CHART_DEFS_BY_ID[id]?.label ?? id}
-                        fullWidth={DASHBOARD_CHART_DEFS_BY_ID[id]?.fullWidth}
+                        fullWidth={fullWidthIds.has(id)}
+                        onToggleFullWidth={() => toggleFullWidth(id)}
                         onRemove={() => removeChart(id)}
                       />
                     ))}
@@ -227,23 +250,29 @@ function DashboardChartsPanelContent({
 
 interface DashboardChartsPanelProps {
   visibleChartIds: string[]
-  onApply: (chartIds: string[]) => void
+  fullWidthChartIds: string[]
+  onApply: (chartIds: string[], fullWidthChartIds: string[]) => void
   onClose: () => void
 }
 
 export function DashboardChartsPanel({
   visibleChartIds,
+  fullWidthChartIds,
   onApply,
   onClose,
 }: DashboardChartsPanelProps) {
   return (
     <Modal
       title="Personalizar gráficos"
-      subtitle="Escolha quais gráficos aparecem no dashboard e arraste para reordenar. Taxa de fuga e Parcela de impressões sempre ocupam a linha inteira."
+      subtitle="Escolha quais gráficos aparecem no dashboard, arraste para reordenar e marque se cada um ocupa linha inteira ou meia linha."
       onClose={onClose}
       widthClassName="max-w-3xl"
     >
-      <DashboardChartsPanelContent visibleChartIds={visibleChartIds} onApply={onApply} />
+      <DashboardChartsPanelContent
+        visibleChartIds={visibleChartIds}
+        fullWidthChartIds={fullWidthChartIds}
+        onApply={onApply}
+      />
     </Modal>
   )
 }

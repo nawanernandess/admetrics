@@ -11,7 +11,7 @@ import {
 } from 'recharts'
 import type { ComputedRecord } from '@/types'
 import { formatDate, formatRatio } from '@/lib/format'
-import { getEdgeTicks, monthYearTickFormatter } from '@/lib/chartHelpers'
+import { blankTickFormatter, getEdgeTicks } from '@/lib/chartHelpers'
 
 function TooltipContent({
   active,
@@ -57,7 +57,7 @@ export function RoasChart({ records }: { records: ComputedRecord[] }) {
             <XAxis
               dataKey="date"
               ticks={ticks}
-              tickFormatter={monthYearTickFormatter}
+              tickFormatter={blankTickFormatter}
               tick={{ fontSize: 12, fill: 'var(--color-text-secondary)' }}
               axisLine={{ stroke: '#eef0f3' }}
               tickLine={false}

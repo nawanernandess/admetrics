@@ -13,7 +13,7 @@ import {
 } from 'recharts'
 import type { ComputedRecord } from '@/types'
 import { formatCurrency, formatDate } from '@/lib/format'
-import { getEdgeTicks, monthYearTickFormatter } from '@/lib/chartHelpers'
+import { blankTickFormatter, getEdgeTicks } from '@/lib/chartHelpers'
 
 interface CpaPoint extends ComputedRecord {
   costPerConversionOrNull: number | null
@@ -74,7 +74,7 @@ export function CpaChart({ records }: { records: ComputedRecord[] }) {
             <XAxis
               dataKey="date"
               ticks={ticks}
-              tickFormatter={monthYearTickFormatter}
+              tickFormatter={blankTickFormatter}
               tick={{ fontSize: 12, fill: 'var(--color-text-secondary)' }}
               axisLine={{ stroke: '#eef0f3' }}
               tickLine={false}
