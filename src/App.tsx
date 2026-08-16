@@ -10,6 +10,8 @@ import { EmptyState } from '@/components/common/EmptyState'
 import { NewProductModal } from '@/components/product/NewProductModal'
 import { LoginScreen } from '@/components/auth/LoginScreen'
 import { buttonPrimaryClass } from '@/components/common/formStyles'
+import { BrandMark } from '@/components/common/BrandMark'
+import { ThemeToggle } from '@/components/common/ThemeToggle'
 
 function MenuIcon() {
   return (
@@ -81,11 +83,15 @@ function AuthenticatedApp() {
             type="button"
             onClick={() => setIsSidebarOpen(true)}
             aria-label="Abrir menu"
-            className="rounded-md p-1.5 text-[var(--color-text-primary)] transition-colors duration-150 hover:bg-slate-100"
+            className="rounded-md p-1.5 text-[var(--color-text-primary)] transition-colors duration-150 hover:bg-[var(--color-hover-bg)]"
           >
             <MenuIcon />
           </button>
-          <span className="text-sm font-bold text-[var(--color-text-primary)]">AdMetrics</span>
+          <span className="flex items-center gap-1.5 text-sm font-bold text-[var(--color-text-primary)]">
+            <BrandMark className="h-4 w-4 text-[var(--color-accent)]" />
+            AdMetrics
+          </span>
+          <ThemeToggle className="ml-auto text-[var(--color-text-secondary)] hover:bg-[var(--color-hover-bg)]" />
         </div>
         {selectedProduct ? (
           <>

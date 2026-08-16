@@ -16,6 +16,7 @@ import { PeriodBanner } from '@/components/dashboard/PeriodBanner'
 import { KpiCards } from '@/components/dashboard/KpiCards'
 import { DashboardChartsPanel } from '@/components/dashboard/DashboardChartsPanel'
 import { CtrCpcChart } from '@/components/dashboard/CtrCpcChart'
+import { ClicksVisitorsConversionsChart } from '@/components/dashboard/ClicksVisitorsConversionsChart'
 import { ConversionRateChart } from '@/components/dashboard/ConversionRateChart'
 import { RoasChart } from '@/components/dashboard/RoasChart'
 import { CpaChart } from '@/components/dashboard/CpaChart'
@@ -33,6 +34,7 @@ interface ChartContext {
 }
 
 const CHART_COMPONENTS: Record<string, (context: ChartContext) => ReactNode> = {
+  clicksVisitorsConversions: ({ records }) => <ClicksVisitorsConversionsChart records={records} />,
   ctrCpc: ({ records }) => <CtrCpcChart records={records} />,
   conversionRate: ({ records }) => <ConversionRateChart records={records} />,
   roas: ({ records }) => <RoasChart records={records} />,

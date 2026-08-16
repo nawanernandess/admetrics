@@ -1,15 +1,16 @@
 import { useState, type FormEvent } from 'react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { TEST_USER_EMAIL, TEST_USER_PASSWORD } from '@/lib/testUser'
-import { buttonPrimaryClass, labelClass } from '@/components/common/formStyles'
+import { buttonPrimaryClass } from '@/components/common/formStyles'
+import { BrandMark } from '@/components/common/BrandMark'
+import { ThemeToggle } from '@/components/common/ThemeToggle'
 
 type AuthMode = 'login' | 'signup'
 
-const inputWithIconClass =
-  'w-full rounded-lg border border-[var(--color-card-border)] bg-white py-2 pl-9 pr-3 text-sm text-[var(--color-text-primary)] outline-none transition-colors duration-150 focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20'
+const fieldLabelClass = 'mb-1.5 block text-sm font-medium text-[var(--color-text-primary)]'
 
-const fieldIconWrapperClass =
-  'pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-secondary-3)]'
+const fieldInputClass =
+  'w-full rounded-lg border border-[var(--color-card-border)] bg-[var(--color-input-bg)] px-4 py-3 text-sm text-[var(--color-text-primary)] outline-none transition-colors duration-150 placeholder:text-[var(--color-text-secondary-3)] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/20'
 
 const noticeClass =
   'animate-fade-in rounded-lg bg-[var(--color-warning-bg)] px-3 py-2 text-sm text-[var(--color-warning-text)]'
@@ -17,72 +18,15 @@ const noticeClass =
 const errorNoticeClass =
   'animate-fade-in rounded-lg bg-[var(--color-negative-bg)] px-3 py-2 text-sm text-[var(--color-negative-text)]'
 
-function UserFieldIcon() {
+function ArrowLeftIcon() {
   return (
-    <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
+    <svg viewBox="0 0 20 20" fill="none" className="h-5 w-5">
       <path
         stroke="currentColor"
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"
-        d="M10 10a3.333 3.333 0 1 0 0-6.667A3.333 3.333 0 0 0 10 10Zm0 0c-3.222 0-5.833 1.94-5.833 4.333V15h11.666v-.667C15.833 11.94 13.222 10 10 10Z"
-      />
-    </svg>
-  )
-}
-
-function MailFieldIcon() {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
-      <path
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M3.333 5.833h13.334c.46 0 .833.373.833.834v6.666c0 .46-.373.834-.833.834H3.333a.833.833 0 0 1-.833-.834V6.667c0-.46.373-.834.833-.834Z"
-      />
-      <path
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="m3.333 6.667 6.25 4.583a.667.667 0 0 0 .834 0l6.25-4.583"
-      />
-    </svg>
-  )
-}
-
-function LockFieldIcon() {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
-      <rect
-        x="4.167"
-        y="9.167"
-        width="11.667"
-        height="7.5"
-        rx="1.25"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-      <path
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        d="M6.667 9.167V6.25a3.333 3.333 0 1 1 6.666 0v2.917"
-      />
-    </svg>
-  )
-}
-
-function SwapIcon() {
-  return (
-    <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
-      <path
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M4 7h10.5M14.5 7 11.5 4M14.5 7l-3 3M16 13H5.5M5.5 13 8.5 16M5.5 13l3-3"
+        d="M16.667 10H3.333M3.333 10 9 15.667M3.333 10 9 4.333"
       />
     </svg>
   )
@@ -117,97 +61,100 @@ export function LoginScreen() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--color-bg)] px-4 py-10">
-      <div className="animate-fade-in-up grid w-full max-w-3xl grid-cols-1 overflow-hidden rounded-3xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] shadow-xl md:grid-cols-2">
-        {/* Painel de identidade */}
-        <div className="relative order-2 flex flex-col overflow-hidden bg-[#fbfaff] p-8 md:order-1">
-          <div className="absolute -top-20 -left-16 h-64 w-64 rounded-full bg-[var(--color-accent)] opacity-35 blur-3xl" />
-          <div className="absolute top-1/3 -right-14 h-56 w-56 rounded-full bg-[var(--color-accent-cyan)] opacity-30 blur-3xl" />
-          <div className="absolute -bottom-24 -left-10 h-64 w-64 rounded-full bg-[var(--color-accent-deep)] opacity-20 blur-3xl" />
-          <div className="absolute top-8 right-10 h-24 w-24 rounded-full bg-[var(--color-accent-light)] opacity-70 blur-2xl" />
-          <img
-            src="/favicon.svg"
-            alt=""
-            aria-hidden="true"
-            className="pointer-events-none absolute right-6 bottom-6 h-28 w-28 opacity-50"
-          />
+    <div className="min-h-screen bg-[var(--color-bg)]">
+      <div className="h-1 bg-[var(--color-accent)]" />
 
-          <div className="relative">
-            <p className="text-xs font-semibold tracking-widest text-[var(--color-text-secondary)] uppercase">
-              Bem-vindo
-            </p>
-            <h1 className="mt-2 text-2xl font-bold text-[var(--color-text-primary)]">
-              {mode === 'login' ? 'Novo Login' : 'Inscreva-se'}
-            </h1>
-            <p className="mt-2 max-w-[240px] text-sm text-[var(--color-text-secondary)]">
-              {mode === 'login'
-                ? 'Acesse sua conta para acompanhar seus produtos.'
-                : 'Crie uma conta para começar a monitorar seus produtos.'}
-            </p>
+      <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6 sm:px-10">
+        <span className="text-lg font-bold">
+          <span className="text-[var(--color-accent)]">Ad</span>
+          <span className="text-[var(--color-text-primary)]">Metrics</span>
+        </span>
+        <ThemeToggle className="text-[var(--color-text-secondary)] hover:bg-[var(--color-hover-bg)]" />
+      </header>
+
+      <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-6 pb-16 sm:px-10 lg:grid-cols-2 lg:gap-16">
+        {/* Painel promocional — só conteúdo de marca, sem nenhum controle
+            interativo. Escondido no mobile para não gerar scroll extra na
+            tela de login, aparece só a partir do breakpoint lg (desktop). */}
+        <div className="relative order-2 hidden overflow-hidden rounded-3xl bg-[#0d0d10] p-8 sm:p-10 lg:order-1 lg:block">
+          <div className="pointer-events-none absolute -top-24 -right-16 h-64 w-64 rounded-full bg-[var(--color-accent)] opacity-30 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-[var(--color-accent-cyan)] opacity-20 blur-3xl" />
+
+          <div className="relative flex h-48 items-center justify-center sm:h-56">
+            <div className="flex h-32 w-52 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--color-accent)] to-[var(--color-accent-deep)] shadow-xl">
+              <BrandMark className="h-16 w-16 text-white/90" />
+            </div>
           </div>
 
-          <div className="relative flex flex-1 items-center gap-3">
-            <button
-              type="button"
-              onClick={toggleMode}
-              aria-label="Alternar entre login e cadastro"
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[var(--color-text-primary)] shadow-sm ring-1 ring-black/5 transition-colors duration-150 hover:bg-slate-50"
-            >
-              <SwapIcon />
-            </button>
-            <button
-              type="button"
-              onClick={toggleMode}
-              className="rounded-lg bg-[var(--color-text-primary)] px-4 py-2 text-sm font-medium text-white transition-opacity duration-150 hover:opacity-90"
-            >
-              {mode === 'login' ? 'Criar conta' : 'Fazer login'}
-            </button>
+          <div className="relative mt-8">
+            <h2 className="text-3xl font-extrabold leading-tight text-white sm:text-4xl">
+              Acompanhe seus produtos em um único painel
+            </h2>
+            <p className="mt-4 max-w-md text-sm text-white/70">
+              Impressões, cliques, conversões e resultado — tudo calculado automaticamente a partir
+              dos seus registros diários, com os dados sempre no seu navegador.
+            </p>
           </div>
         </div>
 
-        {/* Painel de formulário */}
-        <div className="order-1 flex flex-col justify-center p-8 md:order-2">
-          <div className="mb-5 flex items-center justify-between">
-            <h2 className="text-base font-semibold text-[var(--color-text-primary)]">
-              {mode === 'login' ? 'Faça login' : 'Cadastre-se'}
-            </h2>
-            <span className="rounded-full bg-[var(--color-accent-light)] px-3 py-1 text-xs font-semibold text-[var(--color-accent)]">
-              {mode === 'login' ? 'Login' : 'Cadastro'}
-            </span>
-          </div>
+        {/* Formulário — direto na página, sem card/borda ao redor. */}
+        <div className="order-1 mx-auto w-full max-w-sm py-6 lg:order-2 lg:py-0">
+          {mode === 'login' ? (
+            <h1 className="text-3xl font-bold text-[var(--color-text-primary)]">
+              Olá, seja bem-vindo!
+            </h1>
+          ) : (
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={toggleMode}
+                aria-label="Voltar para o login"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[var(--color-text-primary)] transition-colors duration-150 hover:bg-[var(--color-hover-bg)]"
+              >
+                <ArrowLeftIcon />
+              </button>
+              <h1 className="flex-1 text-center text-xs font-bold text-[var(--color-text-primary)]">
+                Criar conta
+              </h1>
+              <span className="h-8 w-8 shrink-0" aria-hidden="true" />
+            </div>
+          )}
+          <p
+            className={
+              mode === 'login'
+                ? 'mt-3 text-sm text-[var(--color-text-secondary)]'
+                : 'mt-3 text-3xl font-bold text-[var(--color-text-primary)]'
+            }
+          >
+            {mode === 'login'
+              ? 'Digite seu e-mail e senha para acessar seus produtos.'
+              : 'Crie sua conta e comece a monitorar seus produtos.'}
+          </p>
 
           {mode === 'login' ? (
-            <form onSubmit={handleLoginSubmit} className="space-y-4">
+            <form onSubmit={handleLoginSubmit} className="mt-8 space-y-4">
               <div>
-                <label className={labelClass}>E-mail</label>
-                <div className="relative">
-                  <span className={fieldIconWrapperClass}>
-                    <MailFieldIcon />
-                  </span>
-                  <input
-                    type="email"
-                    className={inputWithIconClass}
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    autoFocus
-                    required
-                  />
-                </div>
+                <label className={fieldLabelClass}>E-mail</label>
+                <input
+                  type="email"
+                  className={fieldInputClass}
+                  placeholder="Digite seu email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  autoFocus
+                  required
+                />
               </div>
               <div>
-                <label className={labelClass}>Senha</label>
-                <div className="relative">
-                  <span className={fieldIconWrapperClass}>
-                    <LockFieldIcon />
-                  </span>
-                  <input
-                    type="password"
-                    className={inputWithIconClass}
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                    required
-                  />
-                </div>
+                <label className={fieldLabelClass}>Senha</label>
+                <input
+                  type="password"
+                  className={fieldInputClass}
+                  placeholder="Digite sua senha"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  required
+                />
               </div>
 
               <div className="flex items-center justify-between text-xs">
@@ -239,33 +186,18 @@ export function LoginScreen() {
               </button>
             </form>
           ) : (
-            <form onSubmit={handleSignupSubmit} className="space-y-4">
+            <form onSubmit={handleSignupSubmit} className="mt-8 space-y-4">
               <div>
-                <label className={labelClass}>Usuário</label>
-                <div className="relative">
-                  <span className={fieldIconWrapperClass}>
-                    <UserFieldIcon />
-                  </span>
-                  <input type="text" className={inputWithIconClass} />
-                </div>
+                <label className={fieldLabelClass}>Usuário</label>
+                <input type="text" className={fieldInputClass} placeholder="Seu nome" />
               </div>
               <div>
-                <label className={labelClass}>E-mail</label>
-                <div className="relative">
-                  <span className={fieldIconWrapperClass}>
-                    <MailFieldIcon />
-                  </span>
-                  <input type="email" className={inputWithIconClass} />
-                </div>
+                <label className={fieldLabelClass}>E-mail</label>
+                <input type="email" className={fieldInputClass} placeholder="Digite seu email" />
               </div>
               <div>
-                <label className={labelClass}>Senha</label>
-                <div className="relative">
-                  <span className={fieldIconWrapperClass}>
-                    <LockFieldIcon />
-                  </span>
-                  <input type="password" className={inputWithIconClass} />
-                </div>
+                <label className={fieldLabelClass}>Senha</label>
+                <input type="password" className={fieldInputClass} placeholder="Crie uma senha" />
               </div>
 
               <label className="flex items-center gap-2 text-xs text-[var(--color-text-secondary)]">
@@ -279,13 +211,13 @@ export function LoginScreen() {
               {notice ? <p className={noticeClass}>{notice}</p> : null}
 
               <button type="submit" className={`w-full ${buttonPrimaryClass}`}>
-                Entrar
+                Criar conta
               </button>
             </form>
           )}
 
           {mode === 'login' ? (
-            <div className="mt-5 rounded-lg bg-slate-50 px-3 py-2.5 text-xs text-[var(--color-text-secondary)]">
+            <div className="mt-5 rounded-lg bg-[var(--color-hover-bg)] px-3 py-2.5 text-xs text-[var(--color-text-secondary)]">
               <p className="font-medium text-[var(--color-text-primary)]">Usuário de teste</p>
               <p className="mt-0.5 font-tabular">
                 {TEST_USER_EMAIL} · {TEST_USER_PASSWORD}
@@ -293,7 +225,18 @@ export function LoginScreen() {
             </div>
           ) : null}
 
-          <p className="mt-4 text-center text-[11px] leading-relaxed text-[var(--color-text-secondary-3)]">
+          <p className="mt-6 text-xs text-[var(--color-text-secondary)]">
+            {mode === 'login' ? 'Ainda não tem uma conta? ' : 'Já tem uma conta? '}
+            <button
+              type="button"
+              onClick={toggleMode}
+              className="font-semibold text-[var(--color-accent)] hover:underline"
+            >
+              {mode === 'login' ? 'Criar conta' : 'Fazer login'}
+            </button>
+          </p>
+
+          <p className="mt-4 text-[11px] leading-relaxed text-[var(--color-text-secondary-3)]">
             A senha deriva a chave que criptografa seus dados no navegador — ao recarregar a página,
             é preciso logar de novo.
           </p>

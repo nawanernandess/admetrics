@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 
+/* Ativa a variante `dark:` via classe `.dark` na <html> (ver useThemeStore),
+   em vez do padrão prefers-color-scheme — o usuário controla manualmente. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --color-bg: #f6f7f9;
   --color-sidebar-bg: #12161d;
@@ -13,6 +17,15 @@
   --color-text-secondary: #6b7480;
   --color-text-secondary-2: #8a93a1;
   --color-text-secondary-3: #9aa2ae;
+
+  /* Superfícies neutras que antes eram utilitárias fixas (bg-white,
+     bg-slate-50/100/200) — viram var para se adaptar ao tema escuro. */
+  --color-hover-bg: #f8fafc;
+  --color-hover-bg-strong: #e2e8f0;
+  --color-input-bg: #ffffff;
+  --color-tooltip-bg: #ffffff;
+  --color-chart-grid: #eef0f3;
+  --color-chart-cursor: #cbd5e1;
 
   --color-accent: #863bff;
   --color-accent-hover: #7228e6;
@@ -38,6 +51,39 @@
   --font-mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
 }
 
+/* Tema escuro — a sidebar e o cabeçalho da tabela já nascem escuros por
+   identidade visual, então só as superfícies "de conteúdo" (bg, cards,
+   textos, inputs, tons de estado) precisam de contraparte aqui. */
+:root.dark {
+  --color-bg: #10131a;
+  --color-card-bg: #181c24;
+  --color-card-border: #2a2f3a;
+  --color-text-primary: #eef1f6;
+  --color-text-secondary: #9aa3b2;
+  --color-text-secondary-2: #7b8492;
+  --color-text-secondary-3: #6b7480;
+
+  --color-hover-bg: #232834;
+  --color-hover-bg-strong: #2f3644;
+  --color-input-bg: #1f2430;
+  --color-tooltip-bg: #1f2430;
+  --color-chart-grid: #2a2f3a;
+  --color-chart-cursor: #3a4150;
+
+  --color-accent-light: #2a1f4d;
+
+  --color-positive-text: #4ade80;
+  --color-positive-bg: #10291c;
+
+  --color-negative-text: #f87171;
+  --color-negative-bg: #341616;
+
+  --color-warning-text: #fbbf24;
+  --color-warning-bg: #2e2308;
+
+  color-scheme: dark;
+}
+
 html,
 body,
 #root {
@@ -55,6 +101,9 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition:
+    background-color 150ms ease-out,
+    color 150ms ease-out;
 }
 
 h1,

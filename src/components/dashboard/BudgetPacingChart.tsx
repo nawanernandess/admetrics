@@ -25,7 +25,7 @@ function TooltipContent({
   const record = payload[0].payload
   const isOverBudget = record.cost > record.dailyBudget
   return (
-    <div className="rounded-lg border border-[var(--color-card-border)] bg-white px-3 py-2 text-xs shadow-lg">
+    <div className="rounded-lg border border-[var(--color-card-border)] bg-[var(--color-tooltip-bg)] px-3 py-2 text-xs shadow-lg">
       <p className="font-medium text-[var(--color-text-primary)]">{formatDate(record.date)}</p>
       <p
         className={`font-tabular font-semibold ${
@@ -53,29 +53,29 @@ export function BudgetPacingChart({ records }: { records: ComputedRecord[] }) {
       <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">
         Orçamento × custo real
       </h3>
-      <div className="mt-3 h-64">
+      <div className="mt-3 h-56 sm:h-64">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={records} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
-            <CartesianGrid vertical={false} stroke="#eef0f3" />
+            <CartesianGrid vertical={false} stroke="var(--color-chart-grid)" />
             <XAxis
               dataKey="date"
               ticks={ticks}
               tickFormatter={blankTickFormatter}
-              tick={{ fontSize: 12, fill: 'var(--color-text-secondary)' }}
-              axisLine={{ stroke: '#eef0f3' }}
+              tick={{ fontSize: 11, fill: 'var(--color-text-secondary)' }}
+              axisLine={{ stroke: 'var(--color-chart-grid)' }}
               tickLine={false}
             />
             <YAxis
               tickFormatter={(value: number) => formatCurrency(value)}
-              tick={{ fontSize: 11, fill: 'var(--color-text-secondary)' }}
+              tick={{ fontSize: 10, fill: 'var(--color-text-secondary)' }}
               axisLine={false}
               tickLine={false}
               width={72}
             />
-            <Tooltip content={<TooltipContent />} cursor={{ fill: '#f1f5f9' }} />
+            <Tooltip content={<TooltipContent />} cursor={{ fill: 'var(--color-hover-bg)' }} />
             <Legend
               formatter={(value: string) => (
-                <span className="text-xs text-[var(--color-text-secondary)]">{value}</span>
+                <span className="text-[11px] text-[var(--color-text-secondary)]">{value}</span>
               )}
             />
             <Bar

@@ -51,7 +51,7 @@ function SortableColumnRow({
     <li
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-2 rounded-lg border border-[var(--color-card-border)] bg-white px-2.5 py-2 text-sm ${
+      className={`flex items-center gap-2 rounded-lg border border-[var(--color-card-border)] bg-[var(--color-card-bg)] px-2.5 py-2 text-sm ${
         isDragging ? 'opacity-60 shadow-lg' : ''
       }`}
     >
@@ -69,7 +69,7 @@ function SortableColumnRow({
         type="button"
         onClick={onRemove}
         aria-label={`Remover ${label}`}
-        className="-my-2 rounded-md p-2.5 text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-slate-100 hover:text-[var(--color-negative-text)]"
+        className="-my-2 rounded-md p-2.5 text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-[var(--color-hover-bg)] hover:text-[var(--color-negative-text)]"
       >
         ✕
       </button>
@@ -140,7 +140,7 @@ function ColumnsPanelContent({ visibleColumnIds, onApply }: ColumnsPanelContentP
                     {columnsInGroup.map((column) => (
                       <label
                         key={column.id}
-                        className="flex items-center gap-2 rounded-md px-1.5 py-1 text-sm text-[var(--color-text-primary)] transition-colors duration-150 hover:bg-slate-50"
+                        className="flex items-center gap-2 rounded-md px-1.5 py-1 text-sm text-[var(--color-text-primary)] transition-colors duration-150 hover:bg-[var(--color-hover-bg)]"
                       >
                         <input
                           type="checkbox"

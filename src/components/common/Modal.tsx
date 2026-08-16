@@ -61,7 +61,7 @@ export function Modal({
               type="button"
               onClick={requestClose}
               aria-label="Fechar"
-              className="rounded-md p-1 text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-slate-100"
+              className="rounded-md p-1 text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-[var(--color-hover-bg)]"
             >
               ✕
             </button>

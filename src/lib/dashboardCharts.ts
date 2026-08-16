@@ -19,6 +19,12 @@ export const DASHBOARD_CHART_GROUPS = ['Visão geral', 'Funil', 'Financeiro', 'L
 
 export const DASHBOARD_CHART_DEFS: DashboardChartDef[] = [
   { id: 'dailyResult', label: 'Resultado diário', group: 'Visão geral' },
+  {
+    id: 'clicksVisitorsConversions',
+    label: 'Cliques, Visitors e Conversões',
+    group: 'Funil',
+    fullWidth: true,
+  },
   { id: 'ctrCpc', label: 'CTR × CPC', group: 'Funil' },
   { id: 'conversionRate', label: 'Taxa de conversão', group: 'Funil' },
   { id: 'dropoffRate', label: 'Taxa de fuga', group: 'Funil', fullWidth: true },
@@ -35,6 +41,7 @@ export const DASHBOARD_CHART_DEFS_BY_ID: Record<string, DashboardChartDef> = Obj
 
 /** Ordem/visibilidade padrão. */
 export const DEFAULT_VISIBLE_DASHBOARD_CHART_IDS: string[] = [
+  'clicksVisitorsConversions',
   'ctrCpc',
   'dropoffRate',
   'conversionRate',

@@ -35,7 +35,7 @@ export function Header({ product, totalDays }: { product: Product; totalDays: nu
           <button
             type="button"
             onClick={() => selectTab('settings')}
-            className="rounded-lg border border-[var(--color-card-border)] px-3.5 py-2 text-sm font-medium text-[var(--color-text-primary)] transition-colors duration-150 hover:bg-slate-50 active:scale-[0.98]"
+            className="rounded-lg border border-[var(--color-card-border)] px-3.5 py-2 text-sm font-medium text-[var(--color-text-primary)] transition-colors duration-150 hover:bg-[var(--color-hover-bg)] active:scale-[0.98]"
           >
             Editar produto
           </button>

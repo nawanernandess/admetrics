@@ -421,11 +421,11 @@ export function RecordsTab({ product, records }: { product: Product; records: Da
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[var(--color-card-border)] bg-white">
+              <tbody className="divide-y divide-[var(--color-card-border)] bg-[var(--color-card-bg)]">
                 {computedRecords.map((record: ComputedRecord) => (
                   <tr
                     key={record.id}
-                    className={`transition-colors duration-150 hover:bg-slate-50 ${
+                    className={`transition-colors duration-150 hover:bg-[var(--color-hover-bg)] ${
                       selectedIds.has(record.id)
                         ? 'bg-[var(--color-accent-light)]/20'
                         : record.conversions > 0
@@ -447,7 +447,7 @@ export function RecordsTab({ product, records }: { product: Product; records: Da
                         type="button"
                         aria-label="Editar registro"
                         onClick={() => setEditingRecord(record)}
-                        className="rounded-md p-1 text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-slate-200"
+                        className="rounded-md p-1 text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-[var(--color-hover-bg-strong)]"
                       >
                         ✎
                       </button>

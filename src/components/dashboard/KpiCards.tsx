@@ -21,11 +21,13 @@ function KpiCard({
 
   return (
     <div
-      className="animate-fade-in-up rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] px-4 py-3.5"
+      className="animate-fade-in-up min-w-0 rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] px-4 py-3.5"
       style={{ animationDelay: `${delayMs}ms` }}
     >
-      <p className="text-xs font-medium text-[var(--color-text-secondary)]">{label}</p>
-      <p className={`mt-1.5 font-tabular text-2xl font-bold ${toneClass}`}>{value}</p>
+      <p className="truncate text-xs font-medium text-[var(--color-text-secondary)]">{label}</p>
+      <p className={`mt-1.5 truncate font-tabular text-xl font-bold sm:text-2xl ${toneClass}`}>
+        {value}
+      </p>
     </div>
   )
 }

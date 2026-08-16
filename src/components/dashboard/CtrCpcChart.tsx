@@ -22,7 +22,7 @@ function TooltipContent({
   if (!active || !payload?.length) return null
   const record = payload[0].payload
   return (
-    <div className="rounded-lg border border-[var(--color-card-border)] bg-white px-3 py-2 text-xs shadow-lg">
+    <div className="rounded-lg border border-[var(--color-card-border)] bg-[var(--color-tooltip-bg)] px-3 py-2 text-xs shadow-lg">
       <p className="mb-1 font-medium text-[var(--color-text-primary)]">{formatDate(record.date)}</p>
       <p className="font-tabular text-[var(--color-series-cliques)]">
         CTR: <span className="font-semibold">{formatPercent(record.ctr)}</span>
@@ -45,22 +45,22 @@ export function CtrCpcChart({ records }: { records: ComputedRecord[] }) {
   return (
     <div className="animate-fade-in-up rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] p-4">
       <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">CTR × CPC</h3>
-      <div className="mt-3 h-64">
+      <div className="mt-3 h-56 sm:h-64">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={records} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="4 4" stroke="#eef0f3" />
+            <CartesianGrid strokeDasharray="4 4" stroke="var(--color-chart-grid)" />
             <XAxis
               dataKey="date"
               ticks={ticks}
               tickFormatter={blankTickFormatter}
-              tick={{ fontSize: 11, fill: 'var(--color-text-secondary)' }}
-              axisLine={{ stroke: '#eef0f3' }}
+              tick={{ fontSize: 10, fill: 'var(--color-text-secondary)' }}
+              axisLine={{ stroke: 'var(--color-chart-grid)' }}
               tickLine={false}
             />
             <YAxis
               yAxisId="ctr"
               tickFormatter={(value: number) => formatPercent(value, 0)}
-              tick={{ fontSize: 11, fill: 'var(--color-series-cliques)' }}
+              tick={{ fontSize: 10, fill: 'var(--color-series-cliques)' }}
               axisLine={false}
               tickLine={false}
               width={44}
@@ -69,13 +69,13 @@ export function CtrCpcChart({ records }: { records: ComputedRecord[] }) {
               yAxisId="cpc"
               orientation="right"
               tickFormatter={(value: number) => formatCurrency(value)}
-              tick={{ fontSize: 11, fill: 'var(--color-series-cpc)' }}
+              tick={{ fontSize: 10, fill: 'var(--color-series-cpc)' }}
               axisLine={false}
               tickLine={false}
               width={60}
             />
-            <Tooltip content={<TooltipContent />} cursor={{ stroke: '#cbd5e1', strokeWidth: 1 }} />
-            <Legend verticalAlign="top" align="right" height={32} iconType="line" />
+            <Tooltip content={<TooltipContent />} cursor={{ stroke: 'var(--color-chart-cursor)', strokeWidth: 1 }} />
+            <Legend verticalAlign="top" align="right" height={24} iconType="line" wrapperStyle={{ fontSize: 11 }} />
             <Line
               yAxisId="ctr"
               type="monotone"

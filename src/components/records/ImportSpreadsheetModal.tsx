@@ -208,7 +208,7 @@ function ImportSpreadsheetContent({
           className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-6 py-12 text-center transition-colors duration-150 ${
             isDraggingOver
               ? 'border-[var(--color-accent)] bg-[var(--color-accent-light)]/30'
-              : 'border-[var(--color-card-border)] hover:bg-slate-50'
+              : 'border-[var(--color-card-border)] hover:bg-[var(--color-hover-bg)]'
           }`}
         >
           <p className="text-sm font-medium text-[var(--color-text-primary)]">
@@ -227,7 +227,7 @@ function ImportSpreadsheetContent({
         </div>
       ) : (
         <>
-          <div className="flex items-center justify-between rounded-lg bg-slate-50 px-3 py-2 text-sm">
+          <div className="flex items-center justify-between rounded-lg bg-[var(--color-hover-bg)] px-3 py-2 text-sm">
             <span className="truncate font-medium text-[var(--color-text-primary)]">
               📄 {fileName}
             </span>
@@ -291,7 +291,7 @@ function ImportSpreadsheetContent({
                   </p>
                 ) : (
                   <table className="w-full text-xs">
-                    <thead className="sticky top-0 bg-slate-100">
+                    <thead className="sticky top-0 bg-[var(--color-hover-bg-strong)]">
                       <tr>
                         {mappedFields.map((field) => (
                           <th key={field} className="whitespace-nowrap px-2 py-1.5 text-left">

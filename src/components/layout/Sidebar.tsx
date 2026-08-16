@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useAppStore } from '@/store/useAppStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { NewProductModal } from '@/components/product/NewProductModal'
+import { BrandMark } from '@/components/common/BrandMark'
+import { ThemeToggle } from '@/components/common/ThemeToggle'
 
 interface SidebarProps {
   isOpen: boolean
@@ -27,15 +29,18 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       ) : null}
 
       <aside
-        className={`fixed inset-y-0 left-0 z-40 flex h-full w-64 flex-shrink-0 flex-col bg-[var(--color-sidebar-bg)] transition-transform duration-200 md:static md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 flex h-full w-64 max-w-[85vw] flex-shrink-0 flex-col bg-[var(--color-sidebar-bg)] transition-transform duration-200 md:static md:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="flex items-center gap-2 px-5 py-5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--color-accent)] text-sm font-bold text-white">
-            A
-          </span>
-          <span className="text-base font-bold text-white">AdMetrics</span>
+        <div className="flex items-center justify-between gap-2 px-5 py-5">
+          <div className="flex min-w-0 items-center gap-2">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--color-accent)] text-white">
+              <BrandMark className="h-4 w-4" />
+            </span>
+            <span className="truncate text-base font-bold text-white">AdMetrics</span>
+          </div>
+          <ThemeToggle className="shrink-0 text-[var(--color-sidebar-text-inactive)] hover:bg-white/5 hover:text-white" />
         </div>
 
         <nav className="flex-1 space-y-1 overflow-y-auto px-3">
