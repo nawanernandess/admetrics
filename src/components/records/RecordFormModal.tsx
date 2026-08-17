@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { Modal } from '@/components/common/Modal'
 import { useRequestClose } from '@/components/common/modalContext'
@@ -89,10 +90,31 @@ function RecordForm({ product, existingRecord }: RecordFormProps) {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<RecordFormValues>({
     defaultValues: buildDefaultValues(product, existingRecord),
   })
+
+  const conversions = watch('conversions')
+  const skipNextAutoFill = useRef(true)
+
+  // Identifica o valor convertido a partir do valor de conversão definido no
+  // produto assim que "Conversões" muda — não roda na carga inicial pra não
+  // sobrescrever o valor já salvo de um registro existente.
+  useEffect(() => {
+    if (skipNextAutoFill.current) {
+      skipNextAutoFill.current = false
+      return
+    }
+    if (product.targetConversionValue <= 0) return
+    const count = parseDecimal(conversions)
+    if (count > 0) {
+      setValue('convertedValue', toFormValue(count * product.targetConversionValue))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversions])
 
   async function onSubmit(values: RecordFormValues) {
     const payload = {

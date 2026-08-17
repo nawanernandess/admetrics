@@ -35,7 +35,7 @@ function KpiCard({
 export function KpiCards({ kpis }: { kpis: AggregatedKpis }) {
   const isPositiveResult = kpis.cumulativeResult >= 0
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 2xl:grid-cols-6">
       <KpiCard label="Impressões" value={formatInt(kpis.impressions)} delayMs={0} />
       <KpiCard label="Cliques" value={formatInt(kpis.clicks)} delayMs={40} />
       <KpiCard label="Visitors" value={formatInt(kpis.visitors)} delayMs={80} />

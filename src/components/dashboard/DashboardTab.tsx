@@ -12,11 +12,10 @@ import {
   sanitizeDashboardChartIds,
   sanitizeFullWidthChartIds,
 } from '@/lib/dashboardCharts'
-import { PeriodBanner } from '@/components/dashboard/PeriodBanner'
 import { KpiCards } from '@/components/dashboard/KpiCards'
 import { DashboardChartsPanel } from '@/components/dashboard/DashboardChartsPanel'
 import { CtrCpcChart } from '@/components/dashboard/CtrCpcChart'
-import { ClicksVisitorsConversionsChart } from '@/components/dashboard/ClicksVisitorsConversionsChart'
+import { ImpressionsClicksConversionsChart } from '@/components/dashboard/ImpressionsClicksConversionsChart'
 import { ConversionRateChart } from '@/components/dashboard/ConversionRateChart'
 import { RoasChart } from '@/components/dashboard/RoasChart'
 import { CpaChart } from '@/components/dashboard/CpaChart'
@@ -34,7 +33,9 @@ interface ChartContext {
 }
 
 const CHART_COMPONENTS: Record<string, (context: ChartContext) => ReactNode> = {
-  clicksVisitorsConversions: ({ records }) => <ClicksVisitorsConversionsChart records={records} />,
+  clicksVisitorsConversions: ({ records }) => (
+    <ImpressionsClicksConversionsChart records={records} />
+  ),
   ctrCpc: ({ records }) => <CtrCpcChart records={records} />,
   conversionRate: ({ records }) => <ConversionRateChart records={records} />,
   roas: ({ records }) => <RoasChart records={records} />,
@@ -77,7 +78,6 @@ export function DashboardTab({ product, records }: { product: Product; records: 
 
   return (
     <div>
-      <PeriodBanner period={period} />
       <KpiCards kpis={kpis} />
 
       <div className="mt-4 flex justify-end">

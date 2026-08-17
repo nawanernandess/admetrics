@@ -21,7 +21,7 @@ export const DASHBOARD_CHART_DEFS: DashboardChartDef[] = [
   { id: 'dailyResult', label: 'Resultado diário', group: 'Visão geral' },
   {
     id: 'clicksVisitorsConversions',
-    label: 'Cliques, Visitors e Conversões',
+    label: 'Impressões, Cliques e Conversões',
     group: 'Funil',
     fullWidth: true,
   },

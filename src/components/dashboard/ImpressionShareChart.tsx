@@ -9,7 +9,7 @@ import {
   YAxis,
 } from 'recharts'
 import type { ComputedRecord } from '@/types'
-import { formatDate, formatInt, formatPercentRaw } from '@/lib/format'
+import { formatDate, formatPercentRaw } from '@/lib/format'
 import { blankTickFormatter, getEdgeTicks } from '@/lib/chartHelpers'
 
 function TooltipContent({
@@ -25,16 +25,15 @@ function TooltipContent({
     <div className="rounded-lg border border-[var(--color-card-border)] bg-[var(--color-tooltip-bg)] px-3 py-2 text-xs shadow-lg">
       <p className="mb-1 font-medium text-[var(--color-text-primary)]">{formatDate(record.date)}</p>
       <p className="font-tabular text-[var(--color-accent)]">
-        Parc. impressões:{' '}
-        <span className="font-semibold">
-          {formatPercentRaw(record.impressionShare)} ({formatInt(record.impressions)})
-        </span>
+        Parc. de impr. da rede de pesquisa:{' '}
+        <span className="font-semibold">{formatPercentRaw(record.impressionShare)}</span>
       </p>
       <p className="font-tabular text-[var(--color-accent-cyan)]">
-        Parc. superior: <span className="font-semibold">{formatPercentRaw(record.topShare)}</span>
+        % de impr. (parte sup.):{' '}
+        <span className="font-semibold">{formatPercentRaw(record.topShare)}</span>
       </p>
-      <p className="font-tabular text-[var(--color-accent-deep)]">
-        Parc. 1º acima:{' '}
+      <p className="font-tabular text-[var(--color-series-cpc)]">
+        % de impr. (1ª posição):{' '}
         <span className="font-semibold">{formatPercentRaw(record.firstAboveShare)}</span>
       </p>
     </div>
@@ -87,7 +86,7 @@ export function ImpressionShareChart({ records }: { records: ComputedRecord[] })
             <Line
               type="monotone"
               dataKey="impressionShare"
-              name="Parc. impressões"
+              name="Parc. de impr. da rede de pesquisa"
               stroke="var(--color-accent)"
               strokeWidth={2}
               dot={{ r: 3, strokeWidth: 0, fill: 'var(--color-accent)' }}
@@ -97,7 +96,7 @@ export function ImpressionShareChart({ records }: { records: ComputedRecord[] })
             <Line
               type="monotone"
               dataKey="topShare"
-              name="Parc. superior"
+              name="% de impr. (parte sup.)"
               stroke="var(--color-accent-cyan)"
               strokeWidth={2}
               dot={{ r: 3, strokeWidth: 0, fill: 'var(--color-accent-cyan)' }}
@@ -107,10 +106,10 @@ export function ImpressionShareChart({ records }: { records: ComputedRecord[] })
             <Line
               type="monotone"
               dataKey="firstAboveShare"
-              name="Parc. 1º acima"
-              stroke="var(--color-accent-deep)"
+              name="% de impr. (1ª posição)"
+              stroke="var(--color-series-cpc)"
               strokeWidth={2}
-              dot={{ r: 3, strokeWidth: 0, fill: 'var(--color-accent-deep)' }}
+              dot={{ r: 3, strokeWidth: 0, fill: 'var(--color-series-cpc)' }}
               activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }}
               isAnimationActive={false}
             />
