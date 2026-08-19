@@ -53,7 +53,10 @@ export function DashboardTab({ product, records }: { product: Product; records: 
   const dashboardFullWidthChartIds = useAppStore((state) => state.dashboardFullWidthChartIds)
   const setDashboardCharts = useAppStore((state) => state.setDashboardCharts)
 
-  const computedRecords = useMemo(() => computeRecords(records), [records])
+  const computedRecords = useMemo(
+    () => computeRecords(records, product.targetConversionValue),
+    [records, product.targetConversionValue],
+  )
   const kpis = useMemo(() => aggregateKpis(computedRecords), [computedRecords])
   const period = useMemo(() => calculatePeriod(computedRecords), [computedRecords])
   const chartIds = useMemo(() => sanitizeDashboardChartIds(dashboardChartIds), [dashboardChartIds])

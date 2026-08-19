@@ -206,9 +206,9 @@ export function RecordsTab({ product, records }: { product: Product; records: Da
   const deleteRecords = useAppStore((state) => state.deleteRecords)
 
   const computedRecords = useMemo(() => {
-    const sorted = computeRecords(records)
+    const sorted = computeRecords(records, product.targetConversionValue)
     return dateSortAsc ? sorted : sorted.reverse()
-  }, [records, dateSortAsc])
+  }, [records, dateSortAsc, product.targetConversionValue])
 
   const columns = useMemo(
     () =>

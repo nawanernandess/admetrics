@@ -1,4 +1,3 @@
-import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { Modal } from '@/components/common/Modal'
 import { useRequestClose } from '@/components/common/modalContext'
@@ -12,7 +11,7 @@ import {
 } from '@/components/common/formStyles'
 import { useAppStore } from '@/store/useAppStore'
 import { STRATEGIES, type DailyRecord, type Product, type Strategy } from '@/types'
-import { getTodayIso, parseDecimal } from '@/lib/format'
+import { formatCurrency, getTodayIso, parseDecimal } from '@/lib/format'
 
 interface RecordFormValues {
   date: string
@@ -22,7 +21,6 @@ interface RecordFormValues {
   checkouts: string
   conversions: string
   cost: string
-  convertedValue: string
   maxCpcCpa: string
   dailyBudget: string
   bidStrategy: Strategy
@@ -46,7 +44,6 @@ function buildDefaultValues(product: Product, existingRecord?: DailyRecord): Rec
       checkouts: toFormValue(existingRecord.checkouts),
       conversions: toFormValue(existingRecord.conversions),
       cost: toFormValue(existingRecord.cost),
-      convertedValue: toFormValue(existingRecord.convertedValue),
       maxCpcCpa: toFormValue(existingRecord.maxCpcCpa),
       dailyBudget: toFormValue(existingRecord.dailyBudget),
       bidStrategy: existingRecord.bidStrategy,
@@ -64,7 +61,6 @@ function buildDefaultValues(product: Product, existingRecord?: DailyRecord): Rec
     checkouts: '',
     conversions: '',
     cost: '',
-    convertedValue: '',
     maxCpcCpa: toFormValue(product.maxCpcCpa),
     dailyBudget: toFormValue(product.dailyBudget),
     bidStrategy: product.strategy,
@@ -91,30 +87,13 @@ function RecordForm({ product, existingRecord }: RecordFormProps) {
     register,
     handleSubmit,
     watch,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm<RecordFormValues>({
     defaultValues: buildDefaultValues(product, existingRecord),
   })
 
-  const conversions = watch('conversions')
-  const skipNextAutoFill = useRef(true)
-
-  // Identifica o valor convertido a partir do valor de conversão definido no
-  // produto assim que "Conversões" muda — não roda na carga inicial pra não
-  // sobrescrever o valor já salvo de um registro existente.
-  useEffect(() => {
-    if (skipNextAutoFill.current) {
-      skipNextAutoFill.current = false
-      return
-    }
-    if (product.targetConversionValue <= 0) return
-    const count = parseDecimal(conversions)
-    if (count > 0) {
-      setValue('convertedValue', toFormValue(count * product.targetConversionValue))
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [conversions])
+  const conversions = parseDecimal(watch('conversions'))
+  const convertedValue = conversions * product.targetConversionValue
 
   async function onSubmit(values: RecordFormValues) {
     const payload = {
@@ -125,7 +104,7 @@ function RecordForm({ product, existingRecord }: RecordFormProps) {
       checkouts: parseDecimal(values.checkouts),
       conversions: parseDecimal(values.conversions),
       cost: parseDecimal(values.cost),
-      convertedValue: parseDecimal(values.convertedValue),
+      convertedValue: parseDecimal(values.conversions) * product.targetConversionValue,
       maxCpcCpa: parseDecimal(values.maxCpcCpa),
       dailyBudget: parseDecimal(values.dailyBudget),
       bidStrategy: values.bidStrategy,
@@ -201,7 +180,9 @@ function RecordForm({ product, existingRecord }: RecordFormProps) {
             <input className={inputClass} inputMode="decimal" {...register('cost')} />
           </Field>
           <Field label="Valor convertido (R$)">
-            <input className={inputClass} inputMode="decimal" {...register('convertedValue')} />
+            <div className={`${inputClass} flex items-center bg-[var(--color-hover-bg)] text-[var(--color-text-secondary)]`}>
+              {formatCurrency(convertedValue)}
+            </div>
           </Field>
           <Field label="CPC/CPA máx (R$)">
             <input className={inputClass} inputMode="decimal" {...register('maxCpcCpa')} />

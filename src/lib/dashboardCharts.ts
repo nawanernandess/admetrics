@@ -19,19 +19,14 @@ export const DASHBOARD_CHART_GROUPS = ['Visão geral', 'Funil', 'Financeiro', 'L
 
 export const DASHBOARD_CHART_DEFS: DashboardChartDef[] = [
   { id: 'dailyResult', label: 'Resultado diário', group: 'Visão geral' },
-  {
-    id: 'clicksVisitorsConversions',
-    label: 'Impressões, Cliques e Conversões',
-    group: 'Funil',
-    fullWidth: true,
-  },
+  { id: 'clicksVisitorsConversions', label: 'Impressões, Cliques e Conversões', group: 'Funil' },
   { id: 'ctrCpc', label: 'CTR × CPC', group: 'Funil' },
   { id: 'conversionRate', label: 'Taxa de conversão', group: 'Funil' },
   { id: 'dropoffRate', label: 'Taxa de fuga', group: 'Funil', fullWidth: true },
   { id: 'costRevenue', label: 'Custo × Valor convertido', group: 'Financeiro' },
   { id: 'roas', label: 'ROAS', group: 'Financeiro' },
   { id: 'cpa', label: 'CPA vs. meta', group: 'Financeiro' },
-  { id: 'budgetPacing', label: 'Orçamento × custo real', group: 'Financeiro' },
+  { id: 'budgetPacing', label: 'Orçamento × custo real', group: 'Financeiro', fullWidth: true },
   { id: 'impressionShare', label: 'Parcela de impressões', group: 'Leilão', fullWidth: true },
 ]
 
@@ -39,18 +34,15 @@ export const DASHBOARD_CHART_DEFS_BY_ID: Record<string, DashboardChartDef> = Obj
   DASHBOARD_CHART_DEFS.map((chart) => [chart.id, chart]),
 )
 
-/** Ordem/visibilidade padrão. */
+/** Ordem/visibilidade padrão — o que todo usuário novo vê antes de personalizar. */
 export const DEFAULT_VISIBLE_DASHBOARD_CHART_IDS: string[] = [
-  'clicksVisitorsConversions',
-  'ctrCpc',
-  'dropoffRate',
-  'conversionRate',
-  'roas',
-  'cpa',
-  'costRevenue',
   'impressionShare',
-  'budgetPacing',
+  'clicksVisitorsConversions',
   'dailyResult',
+  'dropoffRate',
+  'costRevenue',
+  'ctrCpc',
+  'budgetPacing',
 ]
 
 /** Largura padrão (antes de qualquer escolha do usuário) — só as duas âncoras nascem em linha inteira. */

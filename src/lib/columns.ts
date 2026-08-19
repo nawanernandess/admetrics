@@ -156,23 +156,19 @@ export const COLUMN_DEFS_BY_ID: Record<string, ColumnDef> = Object.fromEntries(
   COLUMN_DEFS.map((column) => [column.id, column]),
 )
 
-/** Ordem/visibilidade padrão — reflete a tabela original antes da personalização. */
+/** Ordem/visibilidade padrão — o que todo usuário novo vê antes de personalizar. */
 export const DEFAULT_VISIBLE_COLUMN_IDS: string[] = [
   'impressions',
   'clicks',
   'visitors',
-  'checkouts',
   'conversions',
-  'ctr',
+  'topShare',
+  'firstAboveShare',
+  'impressionShare',
   'averageCpc',
-  'maxCpcCpa',
-  'dailyBudget',
   'bidStrategy',
   'cost',
-  'convertedValue',
   'result',
-  'result7d',
-  'cumulativeResult',
   'dropoffRate',
   'note',
 ]

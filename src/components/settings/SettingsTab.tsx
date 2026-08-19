@@ -128,7 +128,7 @@ export function SettingsTab({
             <input className={inputClass} inputMode="decimal" {...register('maxCpcCpa')} />
           </div>
           <div>
-            <label className={labelClass}>Valor de conversão definido (R$)</label>
+            <label className={labelClass}>Valor de conversão (R$)</label>
             <input
               className={inputClass}
               inputMode="decimal"

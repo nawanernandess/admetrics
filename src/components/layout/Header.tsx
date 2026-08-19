@@ -47,6 +47,8 @@ export function Header({ product, totalDays }: { product: Product; totalDays: nu
             <span>Orçamento diário: {formatCurrency(product.dailyBudget)}</span>
             <span aria-hidden="true">|</span>
             <span>CPC/CPA máx: {formatCurrency(product.maxCpcCpa)}</span>
+            <span aria-hidden="true">|</span>
+            <span>Valor de conversão: {formatCurrency(product.targetConversionValue)}</span>
             {product.page ? (
               <>
                 <span aria-hidden="true">|</span>

@@ -47,13 +47,20 @@ export function calculateCpm(record: DailyRecord): number {
  * já lançados (não de dias de calendário), refletindo o mesmo comportamento
  * da planilha original.
  */
-export function computeRecords(records: DailyRecord[]): ComputedRecord[] {
+export function computeRecords(
+  records: DailyRecord[],
+  targetConversionValue: number,
+): ComputedRecord[] {
   const sorted = [...records].sort((a, b) => a.date.localeCompare(b.date))
 
   let cumulativeResult = 0
   const recentResults: number[] = []
 
-  return sorted.map((record) => {
+  return sorted.map((rawRecord) => {
+    const record: DailyRecord = {
+      ...rawRecord,
+      convertedValue: rawRecord.conversions * targetConversionValue,
+    }
     const result = calculateResult(record)
     recentResults.push(result)
     if (recentResults.length > RESULT_7D_WINDOW) {
