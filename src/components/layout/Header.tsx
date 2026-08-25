@@ -116,7 +116,7 @@ export function Header({ product }: { product: Product }) {
 
   return (
     <>
-      <div className="flex h-16 items-stretch justify-between border-b border-white/10 bg-[var(--color-sidebar-bg)] px-4 sm:h-11 sm:px-8">
+      <div className="flex h-16 items-stretch justify-between border-b border-[var(--color-sidebar-border)] bg-[var(--color-sidebar-bg)] px-4 sm:h-11 sm:px-8">
         <div className="flex shrink-0 items-stretch gap-3 sm:gap-6 md:gap-10 xl:gap-16">
           <div className="hidden shrink-0 items-center gap-1.5 whitespace-nowrap text-sm sm:flex">
             <ProductsIcon className="h-4 w-4 text-[var(--color-sidebar-text-inactive)]" />
@@ -136,7 +136,7 @@ export function Header({ product }: { product: Product }) {
                   className={`flex items-center gap-1.5 border-b-2 pb-px text-sm font-medium transition-colors duration-150 ${
                     isActive
                       ? 'border-[var(--color-accent)] text-[var(--color-accent)]'
-                      : 'border-transparent text-[var(--color-sidebar-text-inactive)] hover:text-white'
+                      : 'border-transparent text-[var(--color-sidebar-text-inactive)] hover:text-[var(--color-sidebar-text-active)]'
                   }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -151,7 +151,7 @@ export function Header({ product }: { product: Product }) {
           <button
             type="button"
             onClick={() => selectTab('settings')}
-            className="flex items-center gap-1.5 rounded-md border border-white/15 px-2.5 py-1 text-xs font-medium text-[var(--color-sidebar-text-inactive)] transition-colors duration-150 hover:bg-white/5 hover:text-white active:scale-[0.98]"
+            className="flex items-center gap-1.5 rounded-md border border-[var(--color-sidebar-border)] px-2.5 py-1 text-xs font-medium text-[var(--color-sidebar-text-inactive)] transition-colors duration-150 hover:bg-[var(--color-sidebar-hover)] hover:text-[var(--color-sidebar-text-active)] active:scale-[0.98]"
           >
             <EditIcon className="h-3.5 w-3.5 shrink-0" />
             Editar produto
@@ -283,13 +283,13 @@ export function ProductActionsMenu({ product }: { product: Product }) {
         type="button"
         onClick={() => setIsMenuOpen((open) => !open)}
         aria-label="Mais ações"
-        className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--color-sidebar-text-inactive)] transition-colors duration-150 hover:bg-white/10 hover:text-white"
+        className="flex h-8 w-8 items-center justify-center rounded-full text-[var(--color-sidebar-text-inactive)] transition-colors duration-150 hover:bg-[var(--color-sidebar-hover)] hover:text-[var(--color-sidebar-text-active)]"
       >
         <EllipsisIcon />
       </button>
 
       {isMenuOpen ? (
-        <div className="animate-fade-in absolute right-0 top-[calc(100%+8px)] z-20 w-48 overflow-hidden rounded-xl border border-white/10 bg-[#14141c] shadow-2xl">
+        <div className="animate-fade-in absolute right-0 top-[calc(100%+8px)] z-20 w-48 overflow-hidden rounded-xl border border-[var(--color-sidebar-panel-border)] bg-[var(--color-sidebar-panel-bg)] shadow-2xl">
           <div className="p-1">
             <button
               type="button"
@@ -297,7 +297,7 @@ export function ProductActionsMenu({ product }: { product: Product }) {
                 setIsMenuOpen(false)
                 selectTab('settings')
               }}
-              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm font-medium text-[var(--color-sidebar-text-inactive)] transition-colors duration-150 hover:bg-white/5 hover:text-white"
+              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm font-medium text-[var(--color-sidebar-text-inactive)] transition-colors duration-150 hover:bg-[var(--color-sidebar-hover)] hover:text-[var(--color-sidebar-text-active)]"
             >
               <EditIcon className="h-4 w-4 shrink-0" />
               Editar produto
@@ -308,7 +308,7 @@ export function ProductActionsMenu({ product }: { product: Product }) {
                 setIsMenuOpen(false)
                 setIsRecordModalOpen(true)
               }}
-              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm font-medium text-[var(--color-accent)] transition-colors duration-150 hover:bg-white/5"
+              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-sm font-medium text-[var(--color-accent)] transition-colors duration-150 hover:bg-[var(--color-sidebar-hover)]"
             >
               <PlusCircleIcon className="h-4 w-4 shrink-0" />
               Registrar dia
@@ -478,19 +478,19 @@ export function ProductStatsBar({ product, totalDays }: { product: Product; tota
     <div className="flex items-center gap-3 overflow-hidden">
       {items.map((item, index) => (
         <div key={item.key} className="flex items-center gap-3">
-          {index > 0 ? <StatDivider className="h-3.5 bg-white/15" /> : null}
+          {index > 0 ? <StatDivider className="h-3.5 bg-[var(--color-sidebar-border)]" /> : null}
           <StatItem
             icon={item.icon}
             label={item.label}
             value={item.value}
             labelClassName="text-[11px] text-[var(--color-sidebar-text-inactive)]"
-            valueClassName="text-xs font-semibold text-white"
+            valueClassName="text-xs font-semibold text-[var(--color-sidebar-text-active)]"
           />
         </div>
       ))}
       {product.page ? (
         <>
-          {items.length > 0 ? <StatDivider className="h-3.5 bg-white/15" /> : null}
+          {items.length > 0 ? <StatDivider className="h-3.5 bg-[var(--color-sidebar-border)]" /> : null}
           <PresellLink page={product.page} />
         </>
       ) : null}

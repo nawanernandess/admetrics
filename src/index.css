@@ -6,10 +6,14 @@
 
 :root {
   --color-bg: #f6f7f9;
-  --color-sidebar-bg: #12161d;
-  --color-sidebar-selected-bg: #1e2530;
-  --color-sidebar-text-active: #ffffff;
-  --color-sidebar-text-inactive: #aab2bf;
+  --color-sidebar-bg: #ffffff;
+  --color-sidebar-border: #e9ebef;
+  --color-sidebar-selected-bg: #ede6ff;
+  --color-sidebar-text-active: #1a2230;
+  --color-sidebar-text-inactive: #6b7480;
+  --color-sidebar-hover: rgb(0 0 0 / 4%);
+  --color-sidebar-panel-bg: #ffffff;
+  --color-sidebar-panel-border: #e9ebef;
   --color-header-dark: #1b2430;
   --color-card-bg: #ffffff;
   --color-card-border: #e9ebef;
@@ -51,11 +55,16 @@
   --font-mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
 }
 
-/* Tema escuro — a sidebar e o cabeçalho da tabela já nascem escuros por
-   identidade visual, então só as superfícies "de conteúdo" (bg, cards,
-   textos, inputs, tons de estado) precisam de contraparte aqui. */
 :root.dark {
   --color-bg: #10131a;
+  --color-sidebar-bg: #12161d;
+  --color-sidebar-border: rgb(255 255 255 / 10%);
+  --color-sidebar-selected-bg: #1e2530;
+  --color-sidebar-text-active: #ffffff;
+  --color-sidebar-text-inactive: #aab2bf;
+  --color-sidebar-hover: rgb(255 255 255 / 8%);
+  --color-sidebar-panel-bg: #14141c;
+  --color-sidebar-panel-border: rgb(255 255 255 / 10%);
   --color-card-bg: #181c24;
   --color-card-border: #2a2f3a;
   --color-text-primary: #eef1f6;

@@ -19,12 +19,12 @@ const DOT_COLORS = [
 ]
 
 const COMPACT_BADGE_CLASSES: Record<Strategy, string> = {
-  Portfólio: 'bg-teal-500/15 text-teal-300',
-  CPA: 'bg-purple-500/15 text-purple-300',
-  ROAS: 'bg-orange-500/15 text-orange-300',
-  'Maximizar cliques': 'bg-blue-500/15 text-blue-300',
-  'Maximizar conversões': 'bg-green-500/15 text-green-300',
-  'CPC manual': 'bg-slate-500/15 text-slate-300',
+  Portfólio: 'bg-teal-100 text-teal-700 dark:bg-teal-500/15 dark:text-teal-300',
+  CPA: 'bg-purple-100 text-purple-700 dark:bg-purple-500/15 dark:text-purple-300',
+  ROAS: 'bg-orange-100 text-orange-700 dark:bg-orange-500/15 dark:text-orange-300',
+  'Maximizar cliques': 'bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300',
+  'Maximizar conversões': 'bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-300',
+  'CPC manual': 'bg-slate-200 text-slate-700 dark:bg-slate-500/15 dark:text-slate-300',
 }
 
 function CompactBadge({ strategy }: { strategy: Strategy }) {
@@ -190,7 +190,7 @@ export function ProductSwitcher({ className = '' }: { className?: string }) {
       <button
         type="button"
         onClick={() => setIsSwitcherOpen((open) => !open)}
-        className="flex w-full min-w-0 items-center justify-between gap-2 rounded-lg bg-white/8 px-4 py-2 text-sm transition-colors duration-150 hover:bg-white/12 sm:justify-start sm:py-1.5 sm:pl-3 sm:pr-2"
+        className="flex w-full min-w-0 items-center justify-between gap-2 rounded-lg bg-[var(--color-sidebar-hover)] px-4 py-2 text-sm transition-colors duration-150 hover:bg-[var(--color-sidebar-selected-bg)] sm:justify-start sm:py-1.5 sm:pl-3 sm:pr-2"
       >
         {selectedProduct ? (
           <>
@@ -199,7 +199,7 @@ export function ProductSwitcher({ className = '' }: { className?: string }) {
                 className={`h-2 w-2 shrink-0 rounded-full ${dotColorForProduct(selectedProduct.id)}`}
                 aria-hidden="true"
               />
-              <span className="min-w-0 truncate font-medium text-white sm:max-w-[10rem] lg:max-w-[16rem]">
+              <span className="min-w-0 truncate font-medium text-[var(--color-sidebar-text-active)] sm:max-w-[10rem] lg:max-w-[16rem]">
                 {selectedProduct.name}
               </span>
             </span>
@@ -225,16 +225,16 @@ export function ProductSwitcher({ className = '' }: { className?: string }) {
       </button>
 
       {isSwitcherOpen ? (
-        <div className="animate-fade-in absolute left-0 right-0 top-[calc(100%+8px)] z-20 w-auto overflow-hidden rounded-xl border border-white/10 bg-[#14141c] shadow-2xl sm:right-auto sm:w-64">
-          <div className="border-b border-white/10 p-1.5">
-            <div className="flex items-center gap-1.5 rounded-lg bg-white/5 px-2 py-1.5">
+        <div className="animate-fade-in absolute left-0 right-0 top-[calc(100%+8px)] z-20 w-auto overflow-hidden rounded-xl border border-[var(--color-sidebar-panel-border)] bg-[var(--color-sidebar-panel-bg)] shadow-2xl sm:right-auto sm:w-64">
+          <div className="border-b border-[var(--color-sidebar-panel-border)] p-1.5">
+            <div className="flex items-center gap-1.5 rounded-lg bg-[var(--color-sidebar-hover)] px-2 py-1.5">
               <SearchIcon />
               <input
                 autoFocus
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Buscar produto..."
-                className="w-full bg-transparent text-sm text-white placeholder:text-[var(--color-sidebar-text-inactive)] focus:outline-none"
+                className="w-full bg-transparent text-sm text-[var(--color-sidebar-text-active)] placeholder:text-[var(--color-sidebar-text-inactive)] focus:outline-none"
               />
             </div>
           </div>
@@ -256,7 +256,9 @@ export function ProductSwitcher({ className = '' }: { className?: string }) {
                       setIsSwitcherOpen(false)
                     }}
                     className={`flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition-colors duration-150 ${
-                      isSelected ? 'bg-white/10' : 'hover:bg-white/5'
+                      isSelected
+                        ? 'bg-[var(--color-sidebar-selected-bg)]'
+                        : 'hover:bg-[var(--color-sidebar-hover)]'
                     }`}
                   >
                     <span
@@ -265,7 +267,9 @@ export function ProductSwitcher({ className = '' }: { className?: string }) {
                     />
                     <span
                       className={`flex-1 truncate font-medium ${
-                        isSelected ? 'text-white' : 'text-[var(--color-sidebar-text-inactive)]'
+                        isSelected
+                          ? 'text-[var(--color-sidebar-text-active)]'
+                          : 'text-[var(--color-sidebar-text-inactive)]'
                       }`}
                     >
                       {product.name}
@@ -278,14 +282,14 @@ export function ProductSwitcher({ className = '' }: { className?: string }) {
             )}
           </div>
 
-          <div className="border-t border-white/10 p-1">
+          <div className="border-t border-[var(--color-sidebar-panel-border)] p-1">
             <button
               type="button"
               onClick={() => {
                 setIsSwitcherOpen(false)
                 setIsModalOpen(true)
               }}
-              className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm font-medium text-[var(--color-accent)] transition-colors duration-150 hover:bg-white/5"
+              className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm font-medium text-[var(--color-accent)] transition-colors duration-150 hover:bg-[var(--color-sidebar-hover)]"
             >
               <span className="flex h-5 w-5 items-center justify-center rounded-full border border-current text-xs">
                 +
@@ -339,15 +343,18 @@ export function TopBar({
 
   return (
     <header className="flex shrink-0 flex-col">
-      <div className="flex h-14 shrink-0 items-center gap-3 border-b border-white/10 bg-[var(--color-sidebar-bg)] px-4">
+      <div className="flex h-14 shrink-0 items-center gap-3 border-b border-[var(--color-sidebar-border)] bg-[var(--color-sidebar-bg)] px-4">
         <div className="flex shrink-0 items-center gap-2">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[var(--color-accent)] text-white">
             <BrandMark className="h-4 w-4" />
           </span>
-          <span className="text-base font-bold text-white">AdMetrics</span>
+          <span className="text-base font-bold text-[var(--color-sidebar-text-active)]">AdMetrics</span>
         </div>
 
-        <span className="hidden h-6 w-px shrink-0 bg-white/15 sm:block" aria-hidden="true" />
+        <span
+          className="hidden h-6 w-px shrink-0 bg-[var(--color-sidebar-border)] sm:block"
+          aria-hidden="true"
+        />
 
         <div className="hidden sm:block sm:shrink">
           <ProductSwitcher />
@@ -370,13 +377,15 @@ export function TopBar({
           </button>
 
           {isAvatarMenuOpen ? (
-            <div className="animate-fade-in absolute right-0 top-[calc(100%+8px)] z-20 w-56 overflow-hidden rounded-xl border border-white/10 bg-[#14141c] shadow-2xl">
-              <div className="flex items-center gap-2 border-b border-white/10 px-3 py-2.5">
+            <div className="animate-fade-in absolute right-0 top-[calc(100%+8px)] z-20 w-56 overflow-hidden rounded-xl border border-[var(--color-sidebar-panel-border)] bg-[var(--color-sidebar-panel-bg)] shadow-2xl">
+              <div className="flex items-center gap-2 border-b border-[var(--color-sidebar-panel-border)] px-3 py-2.5">
                 <UserIcon className="h-4 w-4 shrink-0 text-[var(--color-sidebar-text-inactive)]" />
-                <p className="truncate text-sm font-medium text-white">{TEST_USER_EMAIL}</p>
+                <p className="truncate text-sm font-medium text-[var(--color-sidebar-text-active)]">
+                  {TEST_USER_EMAIL}
+                </p>
               </div>
 
-              <div className="border-b border-white/10 p-1">
+              <div className="border-b border-[var(--color-sidebar-panel-border)] p-1">
                 <div className="flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 text-sm text-[var(--color-sidebar-text-inactive)]">
                   <span className="flex items-center gap-2">
                     {isDark ? <MoonIcon /> : <SunIcon />}
@@ -389,7 +398,7 @@ export function TopBar({
                     aria-label={isDark ? 'Ativar modo claro' : 'Ativar modo escuro'}
                     onClick={toggleTheme}
                     className={`relative h-5 w-9 shrink-0 rounded-full transition-colors duration-150 ${
-                      isDark ? 'bg-[var(--color-accent)]' : 'bg-white/15'
+                      isDark ? 'bg-[var(--color-accent)]' : 'bg-[var(--color-sidebar-border)]'
                     }`}
                   >
                     <span
@@ -408,7 +417,7 @@ export function TopBar({
                     setIsAvatarMenuOpen(false)
                     logout()
                   }}
-                  className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm font-medium text-red-400 transition-colors duration-150 hover:bg-white/5"
+                  className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm font-medium text-red-400 transition-colors duration-150 hover:bg-[var(--color-sidebar-hover)]"
                 >
                   <LogoutIcon />
                   Sair
