@@ -61,10 +61,10 @@ export function LoginScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg)]">
-      <div className="h-1 bg-[var(--color-accent)]" />
+    <div className="flex min-h-screen flex-col bg-[var(--color-bg)]">
+      <div className="h-1 shrink-0 bg-[var(--color-accent)]" />
 
-      <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-6 sm:px-10">
+      <header className="mx-auto flex w-full max-w-6xl shrink-0 items-center justify-between px-6 py-6 sm:px-10">
         <span className="text-lg font-bold">
           <span className="text-[var(--color-accent)]">Ad</span>
           <span className="text-[var(--color-text-primary)]">Metrics</span>
@@ -72,7 +72,7 @@ export function LoginScreen() {
         <ThemeToggle className="text-[var(--color-text-secondary)] hover:bg-[var(--color-hover-bg)]" />
       </header>
 
-      <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-12 px-6 pb-16 sm:px-10 lg:grid-cols-2 lg:gap-16">
+      <div className="mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 px-6 pb-16 sm:flex-1 sm:content-center sm:px-10 sm:py-10 sm:pb-10 lg:grid-cols-2 lg:gap-16">
         {/* Painel promocional — só conteúdo de marca, sem nenhum controle
             interativo. Escondido no mobile para não gerar scroll extra na
             tela de login, aparece só a partir do breakpoint lg (desktop). */}
