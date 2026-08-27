@@ -1,5 +1,6 @@
 import {
   CartesianGrid,
+  LabelList,
   Legend,
   Line,
   LineChart,
@@ -10,7 +11,7 @@ import {
 } from 'recharts'
 import type { ComputedRecord } from '@/types'
 import { formatDate, formatPercentRaw } from '@/lib/format'
-import { blankTickFormatter, getEdgeTicks } from '@/lib/chartHelpers'
+import { blankTickFormatter, getEdgeTicks, shouldShowDataLabels } from '@/lib/chartHelpers'
 
 function TooltipContent({
   active,
@@ -46,6 +47,7 @@ function TooltipContent({
  */
 export function ImpressionShareChart({ records }: { records: ComputedRecord[] }) {
   const ticks = getEdgeTicks(records)
+  const showLabels = shouldShowDataLabels(records)
 
   return (
     <div className="animate-fade-in-up rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] p-4">
@@ -92,7 +94,23 @@ export function ImpressionShareChart({ records }: { records: ComputedRecord[] })
               dot={{ r: 3, strokeWidth: 0, fill: 'var(--color-accent)' }}
               activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }}
               isAnimationActive={false}
-            />
+            >
+              {showLabels ? (
+                <LabelList
+                  dataKey="impressionShare"
+                  position="top"
+                  formatter={(value: number) => formatPercentRaw(value, 0)}
+                  style={{
+                    fontSize: 9,
+                    fontWeight: 600,
+                    fill: 'var(--color-accent)',
+                    stroke: 'var(--color-card-bg)',
+                    strokeWidth: 3,
+                    paintOrder: 'stroke',
+                  }}
+                />
+              ) : null}
+            </Line>
             <Line
               type="monotone"
               dataKey="topShare"
@@ -102,7 +120,23 @@ export function ImpressionShareChart({ records }: { records: ComputedRecord[] })
               dot={{ r: 3, strokeWidth: 0, fill: 'var(--color-accent-cyan)' }}
               activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }}
               isAnimationActive={false}
-            />
+            >
+              {showLabels ? (
+                <LabelList
+                  dataKey="topShare"
+                  position="bottom"
+                  formatter={(value: number) => formatPercentRaw(value, 0)}
+                  style={{
+                    fontSize: 9,
+                    fontWeight: 600,
+                    fill: 'var(--color-accent-cyan)',
+                    stroke: 'var(--color-card-bg)',
+                    strokeWidth: 3,
+                    paintOrder: 'stroke',
+                  }}
+                />
+              ) : null}
+            </Line>
             <Line
               type="monotone"
               dataKey="firstAboveShare"
@@ -112,7 +146,23 @@ export function ImpressionShareChart({ records }: { records: ComputedRecord[] })
               dot={{ r: 3, strokeWidth: 0, fill: 'var(--color-series-cpc)' }}
               activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }}
               isAnimationActive={false}
-            />
+            >
+              {showLabels ? (
+                <LabelList
+                  dataKey="firstAboveShare"
+                  position="top"
+                  formatter={(value: number) => formatPercentRaw(value, 0)}
+                  style={{
+                    fontSize: 9,
+                    fontWeight: 600,
+                    fill: 'var(--color-series-cpc)',
+                    stroke: 'var(--color-card-bg)',
+                    strokeWidth: 3,
+                    paintOrder: 'stroke',
+                  }}
+                />
+              ) : null}
+            </Line>
           </LineChart>
         </ResponsiveContainer>
       </div>

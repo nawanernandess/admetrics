@@ -2,6 +2,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  LabelList,
   Legend,
   ResponsiveContainer,
   Tooltip,
@@ -10,7 +11,7 @@ import {
 } from 'recharts'
 import type { ComputedRecord } from '@/types'
 import { formatCurrency, formatDate } from '@/lib/format'
-import { blankTickFormatter, getEdgeTicks } from '@/lib/chartHelpers'
+import { blankTickFormatter, getEdgeTicks, shouldShowDataLabels } from '@/lib/chartHelpers'
 
 function TooltipContent({
   active,
@@ -42,6 +43,7 @@ function TooltipContent({
 
 export function CostRevenueChart({ records }: { records: ComputedRecord[] }) {
   const ticks = getEdgeTicks(records)
+  const showLabels = shouldShowDataLabels(records)
 
   return (
     <div className="animate-fade-in-up rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] p-4">
@@ -80,7 +82,23 @@ export function CostRevenueChart({ records }: { records: ComputedRecord[] }) {
               radius={[4, 4, 0, 0]}
               maxBarSize={20}
               isAnimationActive={false}
-            />
+            >
+              {showLabels ? (
+                <LabelList
+                  dataKey="cost"
+                  position="top"
+                  formatter={(value: number) => formatCurrency(value)}
+                  style={{
+                    fontSize: 9,
+                    fontWeight: 600,
+                    fill: '#64748b',
+                    stroke: 'var(--color-card-bg)',
+                    strokeWidth: 3,
+                    paintOrder: 'stroke',
+                  }}
+                />
+              ) : null}
+            </Bar>
             <Bar
               dataKey="convertedValue"
               name="Valor convertido"
@@ -88,7 +106,23 @@ export function CostRevenueChart({ records }: { records: ComputedRecord[] }) {
               radius={[4, 4, 0, 0]}
               maxBarSize={20}
               isAnimationActive={false}
-            />
+            >
+              {showLabels ? (
+                <LabelList
+                  dataKey="convertedValue"
+                  position="top"
+                  formatter={(value: number) => formatCurrency(value)}
+                  style={{
+                    fontSize: 9,
+                    fontWeight: 600,
+                    fill: 'var(--color-accent)',
+                    stroke: 'var(--color-card-bg)',
+                    strokeWidth: 3,
+                    paintOrder: 'stroke',
+                  }}
+                />
+              ) : null}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>

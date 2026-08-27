@@ -4,6 +4,7 @@ import {
   CartesianGrid,
   Cell,
   ComposedChart,
+  LabelList,
   Legend,
   Line,
   ResponsiveContainer,
@@ -13,7 +14,7 @@ import {
 } from 'recharts'
 import type { ComputedRecord } from '@/types'
 import { formatCurrency, formatDate } from '@/lib/format'
-import { blankTickFormatter, getEdgeTicks } from '@/lib/chartHelpers'
+import { blankTickFormatter, getEdgeTicks, shouldShowDataLabels } from '@/lib/chartHelpers'
 
 interface CpaPoint extends ComputedRecord {
   costPerConversionOrNull: number | null
@@ -55,6 +56,7 @@ function TooltipContent({
  */
 export function CpaChart({ records }: { records: ComputedRecord[] }) {
   const ticks = getEdgeTicks(records)
+  const showLabels = shouldShowDataLabels(records)
   const data = useMemo<CpaPoint[]>(
     () =>
       records.map((record) => ({
@@ -99,6 +101,21 @@ export function CpaChart({ records }: { records: ComputedRecord[] }) {
               maxBarSize={20}
               isAnimationActive={false}
             >
+              {showLabels ? (
+                <LabelList
+                  dataKey="costPerConversionOrNull"
+                  position="top"
+                  formatter={(value: number | null) => (value == null ? '' : formatCurrency(value))}
+                  style={{
+                    fontSize: 9,
+                    fontWeight: 600,
+                    fill: 'var(--color-text-secondary)',
+                    stroke: 'var(--color-card-bg)',
+                    strokeWidth: 3,
+                    paintOrder: 'stroke',
+                  }}
+                />
+              ) : null}
               {data.map((point) => (
                 <Cell
                   key={point.id}

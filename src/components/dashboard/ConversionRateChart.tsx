@@ -2,6 +2,7 @@ import {
   Area,
   CartesianGrid,
   ComposedChart,
+  LabelList,
   Line,
   ResponsiveContainer,
   Tooltip,
@@ -10,7 +11,7 @@ import {
 } from 'recharts'
 import type { ComputedRecord } from '@/types'
 import { formatDate, formatPercent } from '@/lib/format'
-import { blankTickFormatter, getEdgeTicks } from '@/lib/chartHelpers'
+import { blankTickFormatter, getEdgeTicks, shouldShowDataLabels } from '@/lib/chartHelpers'
 
 function TooltipContent({
   active,
@@ -34,6 +35,7 @@ function TooltipContent({
 /** Fração dos cliques que terminaram em conversão — fecha o funil junto com CTR e Taxa de fuga. */
 export function ConversionRateChart({ records }: { records: ComputedRecord[] }) {
   const ticks = getEdgeTicks(records)
+  const showLabels = shouldShowDataLabels(records)
 
   return (
     <div className="animate-fade-in-up rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] p-4">
@@ -63,7 +65,10 @@ export function ConversionRateChart({ records }: { records: ComputedRecord[] }) 
               tickLine={false}
               width={44}
             />
-            <Tooltip content={<TooltipContent />} cursor={{ stroke: 'var(--color-chart-cursor)', strokeWidth: 1 }} />
+            <Tooltip
+              content={<TooltipContent />}
+              cursor={{ stroke: 'var(--color-chart-cursor)', strokeWidth: 1 }}
+            />
             <Area
               type="monotone"
               dataKey="conversionRate"
@@ -79,7 +84,23 @@ export function ConversionRateChart({ records }: { records: ComputedRecord[] }) 
               dot={{ r: 3, strokeWidth: 0, fill: 'var(--color-series-cliques)' }}
               activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }}
               isAnimationActive={false}
-            />
+            >
+              {showLabels ? (
+                <LabelList
+                  dataKey="conversionRate"
+                  position="top"
+                  formatter={(value: number) => formatPercent(value, 0)}
+                  style={{
+                    fontSize: 9,
+                    fontWeight: 600,
+                    fill: 'var(--color-series-cliques)',
+                    stroke: 'var(--color-card-bg)',
+                    strokeWidth: 3,
+                    paintOrder: 'stroke',
+                  }}
+                />
+              ) : null}
+            </Line>
           </ComposedChart>
         </ResponsiveContainer>
       </div>

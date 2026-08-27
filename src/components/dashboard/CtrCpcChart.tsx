@@ -1,5 +1,6 @@
 import {
   CartesianGrid,
+  LabelList,
   Legend,
   Line,
   LineChart,
@@ -10,7 +11,7 @@ import {
 } from 'recharts'
 import type { ComputedRecord } from '@/types'
 import { formatCurrency, formatDate, formatPercent } from '@/lib/format'
-import { blankTickFormatter, getEdgeTicks } from '@/lib/chartHelpers'
+import { blankTickFormatter, getEdgeTicks, shouldShowDataLabels } from '@/lib/chartHelpers'
 
 function TooltipContent({
   active,
@@ -41,6 +42,7 @@ function TooltipContent({
  */
 export function CtrCpcChart({ records }: { records: ComputedRecord[] }) {
   const ticks = getEdgeTicks(records)
+  const showLabels = shouldShowDataLabels(records)
 
   return (
     <div className="animate-fade-in-up rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] p-4">
@@ -74,8 +76,17 @@ export function CtrCpcChart({ records }: { records: ComputedRecord[] }) {
               tickLine={false}
               width={60}
             />
-            <Tooltip content={<TooltipContent />} cursor={{ stroke: 'var(--color-chart-cursor)', strokeWidth: 1 }} />
-            <Legend verticalAlign="top" align="right" height={24} iconType="line" wrapperStyle={{ fontSize: 11 }} />
+            <Tooltip
+              content={<TooltipContent />}
+              cursor={{ stroke: 'var(--color-chart-cursor)', strokeWidth: 1 }}
+            />
+            <Legend
+              verticalAlign="top"
+              align="right"
+              height={24}
+              iconType="line"
+              wrapperStyle={{ fontSize: 11 }}
+            />
             <Line
               yAxisId="ctr"
               type="monotone"
@@ -86,7 +97,24 @@ export function CtrCpcChart({ records }: { records: ComputedRecord[] }) {
               dot={{ r: 3, strokeWidth: 0, fill: 'var(--color-series-cliques)' }}
               activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }}
               isAnimationActive={false}
-            />
+            >
+              {showLabels ? (
+                <LabelList
+                  dataKey="ctr"
+                  position="top"
+                  offset={6}
+                  formatter={(value: number) => formatPercent(value, 0)}
+                  style={{
+                    fontSize: 9,
+                    fontWeight: 600,
+                    fill: 'var(--color-series-cliques)',
+                    stroke: 'var(--color-card-bg)',
+                    strokeWidth: 3,
+                    paintOrder: 'stroke',
+                  }}
+                />
+              ) : null}
+            </Line>
             <Line
               yAxisId="cpc"
               type="monotone"
@@ -97,7 +125,24 @@ export function CtrCpcChart({ records }: { records: ComputedRecord[] }) {
               dot={{ r: 3, strokeWidth: 0, fill: 'var(--color-series-cpc)' }}
               activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }}
               isAnimationActive={false}
-            />
+            >
+              {showLabels ? (
+                <LabelList
+                  dataKey="averageCpc"
+                  position="top"
+                  offset={14}
+                  formatter={(value: number) => formatCurrency(value)}
+                  style={{
+                    fontSize: 9,
+                    fontWeight: 600,
+                    fill: 'var(--color-series-cpc)',
+                    stroke: 'var(--color-card-bg)',
+                    strokeWidth: 3,
+                    paintOrder: 'stroke',
+                  }}
+                />
+              ) : null}
+            </Line>
           </LineChart>
         </ResponsiveContainer>
       </div>

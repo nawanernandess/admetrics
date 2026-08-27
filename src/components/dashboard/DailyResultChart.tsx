@@ -3,6 +3,7 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  LabelList,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -11,7 +12,7 @@ import {
 } from 'recharts'
 import type { ComputedRecord } from '@/types'
 import { formatCurrency, formatDate } from '@/lib/format'
-import { blankTickFormatter, getEdgeTicks } from '@/lib/chartHelpers'
+import { blankTickFormatter, getEdgeTicks, shouldShowDataLabels } from '@/lib/chartHelpers'
 
 function TooltipContent({
   active,
@@ -40,6 +41,7 @@ function TooltipContent({
 
 export function DailyResultChart({ records }: { records: ComputedRecord[] }) {
   const ticks = getEdgeTicks(records)
+  const showLabels = shouldShowDataLabels(records)
 
   return (
     <div className="animate-fade-in-up rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] p-4">
@@ -66,6 +68,21 @@ export function DailyResultChart({ records }: { records: ComputedRecord[] }) {
             <ReferenceLine y={0} stroke="var(--color-text-secondary-2)" strokeWidth={1.5} />
             <Tooltip content={<TooltipContent />} cursor={{ fill: 'var(--color-hover-bg)' }} />
             <Bar dataKey="result" radius={4} maxBarSize={18} isAnimationActive={false}>
+              {showLabels ? (
+                <LabelList
+                  dataKey="result"
+                  position="top"
+                  formatter={(value: number) => formatCurrency(value)}
+                  style={{
+                    fontSize: 9,
+                    fontWeight: 600,
+                    fill: 'var(--color-text-secondary)',
+                    stroke: 'var(--color-card-bg)',
+                    strokeWidth: 3,
+                    paintOrder: 'stroke',
+                  }}
+                />
+              ) : null}
               {records.map((record) => (
                 <Cell
                   key={record.id}

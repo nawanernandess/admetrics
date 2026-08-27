@@ -2,6 +2,7 @@ import {
   Bar,
   CartesianGrid,
   ComposedChart,
+  LabelList,
   Legend,
   Line,
   ResponsiveContainer,
@@ -11,7 +12,7 @@ import {
 } from 'recharts'
 import type { ComputedRecord } from '@/types'
 import { formatDate, formatInt } from '@/lib/format'
-import { blankTickFormatter, getEdgeTicks } from '@/lib/chartHelpers'
+import { blankTickFormatter, getEdgeTicks, shouldShowDataLabels } from '@/lib/chartHelpers'
 
 function TooltipContent({
   active,
@@ -46,6 +47,7 @@ function TooltipContent({
  */
 export function ImpressionsClicksConversionsChart({ records }: { records: ComputedRecord[] }) {
   const ticks = getEdgeTicks(records)
+  const showLabels = shouldShowDataLabels(records)
 
   return (
     <div className="animate-fade-in-up rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] p-4">
@@ -98,7 +100,23 @@ export function ImpressionsClicksConversionsChart({ records }: { records: Comput
               radius={3}
               maxBarSize={18}
               isAnimationActive={false}
-            />
+            >
+              {showLabels ? (
+                <LabelList
+                  dataKey="impressions"
+                  position="top"
+                  formatter={(value: number) => formatInt(value)}
+                  style={{
+                    fontSize: 9,
+                    fontWeight: 600,
+                    fill: 'var(--color-accent)',
+                    stroke: 'var(--color-card-bg)',
+                    strokeWidth: 3,
+                    paintOrder: 'stroke',
+                  }}
+                />
+              ) : null}
+            </Bar>
             <Line
               yAxisId="funnel"
               type="monotone"
@@ -109,7 +127,23 @@ export function ImpressionsClicksConversionsChart({ records }: { records: Comput
               dot={{ r: 3, strokeWidth: 0, fill: 'var(--color-series-cliques)' }}
               activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }}
               isAnimationActive={false}
-            />
+            >
+              {showLabels ? (
+                <LabelList
+                  dataKey="clicks"
+                  position="top"
+                  formatter={(value: number) => formatInt(value)}
+                  style={{
+                    fontSize: 9,
+                    fontWeight: 600,
+                    fill: 'var(--color-series-cliques)',
+                    stroke: 'var(--color-card-bg)',
+                    strokeWidth: 3,
+                    paintOrder: 'stroke',
+                  }}
+                />
+              ) : null}
+            </Line>
             <Line
               yAxisId="funnel"
               type="monotone"
@@ -120,7 +154,23 @@ export function ImpressionsClicksConversionsChart({ records }: { records: Comput
               dot={{ r: 3, strokeWidth: 0, fill: 'var(--color-positive-base)' }}
               activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }}
               isAnimationActive={false}
-            />
+            >
+              {showLabels ? (
+                <LabelList
+                  dataKey="conversions"
+                  position="bottom"
+                  formatter={(value: number) => formatInt(value)}
+                  style={{
+                    fontSize: 9,
+                    fontWeight: 600,
+                    fill: 'var(--color-positive-base)',
+                    stroke: 'var(--color-card-bg)',
+                    strokeWidth: 3,
+                    paintOrder: 'stroke',
+                  }}
+                />
+              ) : null}
+            </Line>
           </ComposedChart>
         </ResponsiveContainer>
       </div>

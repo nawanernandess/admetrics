@@ -1,5 +1,6 @@
 import {
   CartesianGrid,
+  LabelList,
   Line,
   LineChart,
   ReferenceLine,
@@ -10,7 +11,7 @@ import {
 } from 'recharts'
 import type { ComputedRecord } from '@/types'
 import { formatDate, formatPercent } from '@/lib/format'
-import { blankTickFormatter, getEdgeTicks } from '@/lib/chartHelpers'
+import { blankTickFormatter, getEdgeTicks, shouldShowDataLabels } from '@/lib/chartHelpers'
 
 function TooltipContent({
   active,
@@ -38,6 +39,7 @@ function TooltipContent({
  */
 export function DropoffRateChart({ records }: { records: ComputedRecord[] }) {
   const ticks = getEdgeTicks(records)
+  const showLabels = shouldShowDataLabels(records)
 
   return (
     <div className="animate-fade-in-up rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] p-4">
@@ -62,7 +64,10 @@ export function DropoffRateChart({ records }: { records: ComputedRecord[] }) {
               width={44}
             />
             <ReferenceLine y={0.2} stroke="var(--color-warning-text)" strokeDasharray="4 4" />
-            <Tooltip content={<TooltipContent />} cursor={{ stroke: 'var(--color-chart-cursor)', strokeWidth: 1 }} />
+            <Tooltip
+              content={<TooltipContent />}
+              cursor={{ stroke: 'var(--color-chart-cursor)', strokeWidth: 1 }}
+            />
             <Line
               type="monotone"
               dataKey="dropoffRate"
@@ -71,7 +76,23 @@ export function DropoffRateChart({ records }: { records: ComputedRecord[] }) {
               dot={{ r: 3, strokeWidth: 0, fill: 'var(--color-negative-base)' }}
               activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }}
               isAnimationActive={false}
-            />
+            >
+              {showLabels ? (
+                <LabelList
+                  dataKey="dropoffRate"
+                  position="top"
+                  formatter={(value: number) => formatPercent(value, 0)}
+                  style={{
+                    fontSize: 9,
+                    fontWeight: 600,
+                    fill: 'var(--color-negative-text)',
+                    stroke: 'var(--color-card-bg)',
+                    strokeWidth: 3,
+                    paintOrder: 'stroke',
+                  }}
+                />
+              ) : null}
+            </Line>
           </LineChart>
         </ResponsiveContainer>
       </div>

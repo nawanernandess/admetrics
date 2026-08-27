@@ -2,6 +2,7 @@ import {
   Area,
   CartesianGrid,
   ComposedChart,
+  LabelList,
   Line,
   ReferenceLine,
   ResponsiveContainer,
@@ -11,7 +12,7 @@ import {
 } from 'recharts'
 import type { ComputedRecord } from '@/types'
 import { formatDate, formatRatio } from '@/lib/format'
-import { blankTickFormatter, getEdgeTicks } from '@/lib/chartHelpers'
+import { blankTickFormatter, getEdgeTicks, shouldShowDataLabels } from '@/lib/chartHelpers'
 
 function TooltipContent({
   active,
@@ -40,6 +41,7 @@ function TooltipContent({
 /** Retorno sobre o investimento (valor convertido / custo) — abaixo de 1x, o dia deu prejuízo. */
 export function RoasChart({ records }: { records: ComputedRecord[] }) {
   const ticks = getEdgeTicks(records)
+  const showLabels = shouldShowDataLabels(records)
 
   return (
     <div className="animate-fade-in-up rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] p-4">
@@ -80,7 +82,10 @@ export function RoasChart({ records }: { records: ComputedRecord[] }) {
                 fill: 'var(--color-text-secondary)',
               }}
             />
-            <Tooltip content={<TooltipContent />} cursor={{ stroke: 'var(--color-chart-cursor)', strokeWidth: 1 }} />
+            <Tooltip
+              content={<TooltipContent />}
+              cursor={{ stroke: 'var(--color-chart-cursor)', strokeWidth: 1 }}
+            />
             <Area
               type="monotone"
               dataKey="roas"
@@ -96,7 +101,23 @@ export function RoasChart({ records }: { records: ComputedRecord[] }) {
               dot={{ r: 3, strokeWidth: 0, fill: 'var(--color-positive-base)' }}
               activeDot={{ r: 5, strokeWidth: 2, stroke: '#fff' }}
               isAnimationActive={false}
-            />
+            >
+              {showLabels ? (
+                <LabelList
+                  dataKey="roas"
+                  position="top"
+                  formatter={(value: number) => formatRatio(value)}
+                  style={{
+                    fontSize: 9,
+                    fontWeight: 600,
+                    fill: 'var(--color-positive-text)',
+                    stroke: 'var(--color-card-bg)',
+                    strokeWidth: 3,
+                    paintOrder: 'stroke',
+                  }}
+                />
+              ) : null}
+            </Line>
           </ComposedChart>
         </ResponsiveContainer>
       </div>

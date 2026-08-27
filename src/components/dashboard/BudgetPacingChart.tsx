@@ -3,6 +3,7 @@ import {
   CartesianGrid,
   Cell,
   ComposedChart,
+  LabelList,
   Legend,
   Line,
   ResponsiveContainer,
@@ -12,7 +13,7 @@ import {
 } from 'recharts'
 import type { ComputedRecord } from '@/types'
 import { formatCurrency, formatDate } from '@/lib/format'
-import { blankTickFormatter, getEdgeTicks } from '@/lib/chartHelpers'
+import { blankTickFormatter, getEdgeTicks, shouldShowDataLabels } from '@/lib/chartHelpers'
 
 function TooltipContent({
   active,
@@ -47,6 +48,7 @@ function TooltipContent({
 /** Ritmo de gasto — custo real do dia (barra) contra o orçamento diário definido (linha). */
 export function BudgetPacingChart({ records }: { records: ComputedRecord[] }) {
   const ticks = getEdgeTicks(records)
+  const showLabels = shouldShowDataLabels(records)
 
   return (
     <div className="animate-fade-in-up rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] p-4">
@@ -85,6 +87,21 @@ export function BudgetPacingChart({ records }: { records: ComputedRecord[] }) {
               maxBarSize={20}
               isAnimationActive={false}
             >
+              {showLabels ? (
+                <LabelList
+                  dataKey="cost"
+                  position="top"
+                  formatter={(value: number) => formatCurrency(value)}
+                  style={{
+                    fontSize: 9,
+                    fontWeight: 600,
+                    fill: 'var(--color-text-secondary)',
+                    stroke: 'var(--color-card-bg)',
+                    strokeWidth: 3,
+                    paintOrder: 'stroke',
+                  }}
+                />
+              ) : null}
               {records.map((record) => (
                 <Cell
                   key={record.id}

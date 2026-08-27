@@ -1,11 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import type { ComputedRecord, DailyRecord, Product } from '@/types'
-import {
-  aggregateKpis,
-  calculatePeriod,
-  computeRecords,
-  type PeriodInfo,
-} from '@/lib/calculations'
+import { aggregateKpis, calculatePeriod, computeRecords, type PeriodInfo } from '@/lib/calculations'
 import { useAppStore } from '@/store/useAppStore'
 import {
   computeDashboardChartLayout,
