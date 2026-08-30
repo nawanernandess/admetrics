@@ -400,14 +400,6 @@ function buildStatItems(product: Product, totalDays: number): StatEntry[] {
           value: String(totalDays),
         }
       : null,
-    product.dailyBudget > 0
-      ? {
-          key: 'budget',
-          icon: <WalletIcon />,
-          label: 'Orçamento diário',
-          value: formatCurrency(product.dailyBudget),
-        }
-      : null,
     product.maxCpcCpa > 0
       ? {
           key: 'cpc',
@@ -422,6 +414,14 @@ function buildStatItems(product: Product, totalDays: number): StatEntry[] {
           icon: <CoinsIcon />,
           label: 'Valor de conversão',
           value: formatCurrency(product.targetConversionValue),
+        }
+      : null,
+    product.dailyBudget > 0
+      ? {
+          key: 'budget',
+          icon: <WalletIcon />,
+          label: 'Orçamento diário',
+          value: formatCurrency(product.dailyBudget),
         }
       : null,
   ].filter((item): item is StatEntry => item !== null)
@@ -476,6 +476,12 @@ export function ProductStatsBar({ product, totalDays }: { product: Product; tota
 
   return (
     <div className="flex items-center gap-3 overflow-hidden">
+      {product.page ? (
+        <>
+          <PresellLink page={product.page} />
+          {items.length > 0 ? <StatDivider className="h-3.5 bg-[var(--color-sidebar-border)]" /> : null}
+        </>
+      ) : null}
       {items.map((item, index) => (
         <div key={item.key} className="flex items-center gap-3">
           {index > 0 ? <StatDivider className="h-3.5 bg-[var(--color-sidebar-border)]" /> : null}
@@ -488,12 +494,6 @@ export function ProductStatsBar({ product, totalDays }: { product: Product; tota
           />
         </div>
       ))}
-      {product.page ? (
-        <>
-          {items.length > 0 ? <StatDivider className="h-3.5 bg-[var(--color-sidebar-border)]" /> : null}
-          <PresellLink page={product.page} />
-        </>
-      ) : null}
     </div>
   )
 }
@@ -505,6 +505,12 @@ export function ProductStatsCard({ product, totalDays }: { product: Product; tot
   return (
     <div className="mb-5 flex justify-center xl:hidden">
       <div className="inline-flex flex-wrap items-center justify-center gap-3 rounded-lg border border-[var(--color-card-border)] bg-[var(--color-card-bg)] px-4 py-2.5 text-sm shadow-sm">
+        {product.page ? (
+          <>
+            <PresellLink page={product.page} />
+            {items.length > 0 ? <StatDivider className="h-4 bg-[var(--color-card-border)]" /> : null}
+          </>
+        ) : null}
         {items.map((item, index) => (
           <div key={item.key} className="flex items-center gap-3">
             {index > 0 ? <StatDivider className="h-4 bg-[var(--color-card-border)]" /> : null}
@@ -517,12 +523,6 @@ export function ProductStatsCard({ product, totalDays }: { product: Product; tot
             />
           </div>
         ))}
-        {product.page ? (
-          <>
-            {items.length > 0 ? <StatDivider className="h-4 bg-[var(--color-card-border)]" /> : null}
-            <PresellLink page={product.page} />
-          </>
-        ) : null}
       </div>
     </div>
   )
