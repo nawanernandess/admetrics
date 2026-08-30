@@ -39,6 +39,7 @@ export function LoginScreen() {
   const [mode, setMode] = useState<AuthMode>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [remember, setRemember] = useState(false)
   const [notice, setNotice] = useState<string | null>(null)
 
   function toggleMode() {
@@ -48,7 +49,7 @@ export function LoginScreen() {
 
   async function handleLoginSubmit(event: FormEvent) {
     event.preventDefault()
-    await login(email, password)
+    await login(email, password, remember)
   }
 
   function handleSignupSubmit(event: FormEvent) {
@@ -161,6 +162,8 @@ export function LoginScreen() {
                 <label className="flex items-center gap-2 text-[var(--color-text-secondary)]">
                   <input
                     type="checkbox"
+                    checked={remember}
+                    onChange={(event) => setRemember(event.target.checked)}
                     className="h-3.5 w-3.5 rounded border-[var(--color-card-border)] accent-[var(--color-accent)]"
                   />
                   Lembrar
@@ -173,6 +176,12 @@ export function LoginScreen() {
                   Esqueceu a senha?
                 </button>
               </div>
+
+              {remember ? (
+                <p className={noticeClass}>
+                  Seu login ficará salvo neste navegador por 7 dias.
+                </p>
+              ) : null}
 
               {error ? <p className={errorNoticeClass}>{error}</p> : null}
               {notice ? <p className={noticeClass}>{notice}</p> : null}

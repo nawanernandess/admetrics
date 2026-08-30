@@ -14,7 +14,7 @@ interface AuthState {
   isSubmitting: boolean
   error: string | null
   restoreSession: () => Promise<void>
-  login: (email: string, password: string) => Promise<boolean>
+  login: (email: string, password: string, remember: boolean) => Promise<boolean>
   logout: () => void
 }
 
@@ -29,7 +29,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ isAuthenticated: restored, isRestoring: false })
   },
 
-  login: async (email, password) => {
+  login: async (email, password, remember) => {
     set({ isSubmitting: true, error: null })
 
     const passwordHash = await hashPassword(password)
@@ -41,13 +41,13 @@ export const useAuthStore = create<AuthState>((set) => ({
       return false
     }
 
-    // A chave só existe a partir daqui — nunca fica em localStorage nem é
-    // enviada a lugar nenhum. Fica em memória e, para sobreviver a um F5,
-    // também na sessionStorage (limpa ao fechar a aba/navegador — ver
-    // `authSession.ts`).
+    // A chave só existe a partir daqui — nunca é enviada a lugar nenhum.
+    // Fica em memória e, para sobreviver a um F5, também na sessionStorage
+    // (limpa ao fechar a aba/navegador). Se "Lembrar" estiver marcado, vai
+    // também para a localStorage por até 7 dias — ver `authSession.ts`.
     const salt = getOrCreateSalt()
     const key = await deriveEncryptionKey(password, salt)
-    await setEncryptionKey(key)
+    await setEncryptionKey(key, remember)
 
     set({ isAuthenticated: true, isSubmitting: false, error: null })
     return true
