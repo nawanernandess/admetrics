@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react'
 import {
   CartesianGrid,
   LabelList,
@@ -11,7 +12,15 @@ import {
 } from 'recharts'
 import type { ComputedRecord } from '@/types'
 import { formatDate, formatPercentRaw } from '@/lib/format'
-import { blankTickFormatter, getEdgeTicks, shouldShowDataLabels } from '@/lib/chartHelpers'
+import { useIsMobile } from '@/lib/useIsMobile'
+import {
+  blankTickFormatter,
+  filterByPeriod,
+  getEdgeTicks,
+  shouldShowDataLabels,
+  type ChartPeriod,
+} from '@/lib/chartHelpers'
+import { ChartPeriodFilter } from './ChartPeriodFilter'
 
 function TooltipContent({
   active,
@@ -46,8 +55,11 @@ function TooltipContent({
  * é útil se esses campos estiverem sendo preenchidos nos registros diários.
  */
 export function ImpressionShareChart({ records }: { records: ComputedRecord[] }) {
-  const ticks = getEdgeTicks(records)
-  const showLabels = shouldShowDataLabels(records)
+  const [period, setPeriod] = useState<ChartPeriod>('mes')
+  const filteredRecords = useMemo(() => filterByPeriod(records, period), [records, period])
+  const ticks = getEdgeTicks(filteredRecords)
+  const showLabels = shouldShowDataLabels(filteredRecords)
+  const isMobile = useIsMobile()
 
   return (
     <div className="animate-fade-in-up rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] p-4">
@@ -56,7 +68,7 @@ export function ImpressionShareChart({ records }: { records: ComputedRecord[] })
       </h3>
       <div className="mt-3 h-56 sm:h-64">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={records} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
+          <LineChart data={filteredRecords} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="4 4" stroke="var(--color-chart-grid)" />
             <XAxis
               dataKey="date"
@@ -78,13 +90,16 @@ export function ImpressionShareChart({ records }: { records: ComputedRecord[] })
               content={<TooltipContent />}
               cursor={{ stroke: 'var(--color-chart-cursor)', strokeWidth: 1 }}
             />
-            <Legend
-              verticalAlign="top"
-              align="right"
-              height={24}
-              iconType="line"
-              wrapperStyle={{ fontSize: 11 }}
-            />
+            {isMobile ? (
+              <Legend
+                iconType="line"
+                formatter={(value: string) => (
+                  <span className="text-[11px] text-[var(--color-text-secondary)]">{value}</span>
+                )}
+              />
+            ) : (
+              <Legend verticalAlign="top" align="right" height={24} iconType="line" wrapperStyle={{ fontSize: 11 }} />
+            )}
             <Line
               type="monotone"
               dataKey="impressionShare"
@@ -166,6 +181,7 @@ export function ImpressionShareChart({ records }: { records: ComputedRecord[] })
           </LineChart>
         </ResponsiveContainer>
       </div>
+      <ChartPeriodFilter value={period} onChange={setPeriod} />
     </div>
   )
 }

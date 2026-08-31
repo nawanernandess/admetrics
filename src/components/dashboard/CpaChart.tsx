@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import {
   Bar,
   CartesianGrid,
@@ -14,7 +14,14 @@ import {
 } from 'recharts'
 import type { ComputedRecord } from '@/types'
 import { formatCurrency, formatDate } from '@/lib/format'
-import { blankTickFormatter, getEdgeTicks, shouldShowDataLabels } from '@/lib/chartHelpers'
+import {
+  blankTickFormatter,
+  filterByPeriod,
+  getEdgeTicks,
+  shouldShowDataLabels,
+  type ChartPeriod,
+} from '@/lib/chartHelpers'
+import { ChartPeriodFilter } from './ChartPeriodFilter'
 
 interface CpaPoint extends ComputedRecord {
   costPerConversionOrNull: number | null
@@ -55,15 +62,17 @@ function TooltipContent({
  * Dias sem conversão ficam sem barra (custo/0 não é "CPA de graça", é indefinido).
  */
 export function CpaChart({ records }: { records: ComputedRecord[] }) {
-  const ticks = getEdgeTicks(records)
-  const showLabels = shouldShowDataLabels(records)
+  const [period, setPeriod] = useState<ChartPeriod>('mes')
+  const filteredRecords = useMemo(() => filterByPeriod(records, period), [records, period])
+  const ticks = getEdgeTicks(filteredRecords)
+  const showLabels = shouldShowDataLabels(filteredRecords)
   const data = useMemo<CpaPoint[]>(
     () =>
-      records.map((record) => ({
+      filteredRecords.map((record) => ({
         ...record,
         costPerConversionOrNull: record.conversions > 0 ? record.costPerConversion : null,
       })),
-    [records],
+    [filteredRecords],
   )
 
   return (
@@ -141,6 +150,7 @@ export function CpaChart({ records }: { records: ComputedRecord[] }) {
           </ComposedChart>
         </ResponsiveContainer>
       </div>
+      <ChartPeriodFilter value={period} onChange={setPeriod} />
     </div>
   )
 }

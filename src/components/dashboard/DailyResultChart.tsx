@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react'
 import {
   Bar,
   BarChart,
@@ -12,7 +13,14 @@ import {
 } from 'recharts'
 import type { ComputedRecord } from '@/types'
 import { formatCurrency, formatDate } from '@/lib/format'
-import { blankTickFormatter, getEdgeTicks, shouldShowDataLabels } from '@/lib/chartHelpers'
+import {
+  blankTickFormatter,
+  filterByPeriod,
+  getEdgeTicks,
+  shouldShowDataLabels,
+  type ChartPeriod,
+} from '@/lib/chartHelpers'
+import { ChartPeriodFilter } from './ChartPeriodFilter'
 
 function TooltipContent({
   active,
@@ -40,15 +48,17 @@ function TooltipContent({
 }
 
 export function DailyResultChart({ records }: { records: ComputedRecord[] }) {
-  const ticks = getEdgeTicks(records)
-  const showLabels = shouldShowDataLabels(records)
+  const [period, setPeriod] = useState<ChartPeriod>('mes')
+  const filteredRecords = useMemo(() => filterByPeriod(records, period), [records, period])
+  const ticks = getEdgeTicks(filteredRecords)
+  const showLabels = shouldShowDataLabels(filteredRecords)
 
   return (
     <div className="animate-fade-in-up rounded-xl border border-[var(--color-card-border)] bg-[var(--color-card-bg)] p-4">
       <h3 className="text-sm font-semibold text-[var(--color-text-primary)]">Resultado diário</h3>
       <div className="mt-3 h-56 sm:h-64">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={records} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
+          <BarChart data={filteredRecords} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
             <CartesianGrid vertical={false} stroke="var(--color-chart-grid)" />
             <XAxis
               dataKey="date"
@@ -83,7 +93,7 @@ export function DailyResultChart({ records }: { records: ComputedRecord[] }) {
                   }}
                 />
               ) : null}
-              {records.map((record) => (
+              {filteredRecords.map((record) => (
                 <Cell
                   key={record.id}
                   fill={
@@ -95,6 +105,7 @@ export function DailyResultChart({ records }: { records: ComputedRecord[] }) {
           </BarChart>
         </ResponsiveContainer>
       </div>
+      <ChartPeriodFilter value={period} onChange={setPeriod} />
     </div>
   )
 }
