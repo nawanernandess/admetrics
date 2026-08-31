@@ -120,7 +120,7 @@ export function ImpressionsClicksConversionsChart({ records }: { records: Comput
                 <LabelList
                   dataKey="impressions"
                   position="top"
-                  formatter={(value: number) => formatInt(value)}
+                  formatter={(value) => formatInt(Number(value))}
                   style={{
                     fontSize: 9,
                     fontWeight: 600,
@@ -147,7 +147,7 @@ export function ImpressionsClicksConversionsChart({ records }: { records: Comput
                 <LabelList
                   dataKey="clicks"
                   position="top"
-                  formatter={(value: number) => formatInt(value)}
+                  formatter={(value) => formatInt(Number(value))}
                   style={{
                     fontSize: 9,
                     fontWeight: 600,
@@ -174,7 +174,7 @@ export function ImpressionsClicksConversionsChart({ records }: { records: Comput
                 <LabelList
                   dataKey="conversions"
                   position="bottom"
-                  formatter={(value: number) => formatInt(value)}
+                  formatter={(value) => formatInt(Number(value))}
                   style={{
                     fontSize: 9,
                     fontWeight: 600,

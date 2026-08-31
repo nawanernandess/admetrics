@@ -82,7 +82,7 @@ export function DailyResultChart({ records }: { records: ComputedRecord[] }) {
                 <LabelList
                   dataKey="result"
                   position="top"
-                  formatter={(value: number) => formatCurrency(value)}
+                  formatter={(value) => formatCurrency(Number(value))}
                   style={{
                     fontSize: 9,
                     fontWeight: 600,

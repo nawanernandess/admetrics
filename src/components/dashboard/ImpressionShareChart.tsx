@@ -114,7 +114,7 @@ export function ImpressionShareChart({ records }: { records: ComputedRecord[] })
                 <LabelList
                   dataKey="impressionShare"
                   position="top"
-                  formatter={(value: number) => formatPercentRaw(value, 0)}
+                  formatter={(value) => formatPercentRaw(Number(value), 0)}
                   style={{
                     fontSize: 9,
                     fontWeight: 600,
@@ -140,7 +140,7 @@ export function ImpressionShareChart({ records }: { records: ComputedRecord[] })
                 <LabelList
                   dataKey="topShare"
                   position="bottom"
-                  formatter={(value: number) => formatPercentRaw(value, 0)}
+                  formatter={(value) => formatPercentRaw(Number(value), 0)}
                   style={{
                     fontSize: 9,
                     fontWeight: 600,
@@ -166,7 +166,7 @@ export function ImpressionShareChart({ records }: { records: ComputedRecord[] })
                 <LabelList
                   dataKey="firstAboveShare"
                   position="top"
-                  formatter={(value: number) => formatPercentRaw(value, 0)}
+                  formatter={(value) => formatPercentRaw(Number(value), 0)}
                   style={{
                     fontSize: 9,
                     fontWeight: 600,

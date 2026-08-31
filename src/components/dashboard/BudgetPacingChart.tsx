@@ -101,7 +101,7 @@ export function BudgetPacingChart({ records }: { records: ComputedRecord[] }) {
                 <LabelList
                   dataKey="cost"
                   position="top"
-                  formatter={(value: number) => formatCurrency(value)}
+                  formatter={(value) => formatCurrency(Number(value))}
                   style={{
                     fontSize: 9,
                     fontWeight: 600,

@@ -89,7 +89,7 @@ function ChevronRightIcon({ className = '' }: { className?: string }) {
   )
 }
 
-const TABS: Array<{ id: MainTab; label: string; Icon: (props: { className?: string }) => JSX.Element }> = [
+const TABS: Array<{ id: MainTab; label: string; Icon: (props: { className?: string }) => ReactNode }> = [
   { id: 'dashboard', label: 'Dashboard', Icon: DashboardIcon },
   { id: 'records', label: 'Registro', Icon: RecordsIcon },
   { id: 'settings', label: 'Configurações', Icon: SettingsIcon },
@@ -391,7 +391,7 @@ interface StatEntry {
 }
 
 function buildStatItems(product: Product, totalDays: number): StatEntry[] {
-  return [
+  const items: Array<StatEntry | null> = [
     totalDays > 0
       ? {
           key: 'dias',
@@ -424,7 +424,8 @@ function buildStatItems(product: Product, totalDays: number): StatEntry[] {
           value: formatCurrency(product.dailyBudget),
         }
       : null,
-  ].filter((item): item is StatEntry => item !== null)
+  ]
+  return items.filter((item): item is StatEntry => item !== null)
 }
 
 function StatItem({

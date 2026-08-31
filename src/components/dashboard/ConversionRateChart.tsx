@@ -99,7 +99,7 @@ export function ConversionRateChart({ records }: { records: ComputedRecord[] }) 
                 <LabelList
                   dataKey="conversionRate"
                   position="top"
-                  formatter={(value: number) => formatPercent(value, 0)}
+                  formatter={(value) => formatPercent(Number(value), 0)}
                   style={{
                     fontSize: 9,
                     fontWeight: 600,

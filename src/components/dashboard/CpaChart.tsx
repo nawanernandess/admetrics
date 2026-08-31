@@ -114,7 +114,7 @@ export function CpaChart({ records }: { records: ComputedRecord[] }) {
                 <LabelList
                   dataKey="costPerConversionOrNull"
                   position="top"
-                  formatter={(value: number | null) => (value == null ? '' : formatCurrency(value))}
+                  formatter={(value) => (value == null ? '' : formatCurrency(Number(value)))}
                   style={{
                     fontSize: 9,
                     fontWeight: 600,

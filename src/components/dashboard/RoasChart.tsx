@@ -116,7 +116,7 @@ export function RoasChart({ records }: { records: ComputedRecord[] }) {
                 <LabelList
                   dataKey="roas"
                   position="top"
-                  formatter={(value: number) => formatRatio(value)}
+                  formatter={(value) => formatRatio(Number(value))}
                   style={{
                     fontSize: 9,
                     fontWeight: 600,

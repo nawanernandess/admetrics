@@ -97,7 +97,7 @@ export function CostRevenueChart({ records }: { records: ComputedRecord[] }) {
                 <LabelList
                   dataKey="cost"
                   position="top"
-                  formatter={(value: number) => formatCurrency(value)}
+                  formatter={(value) => formatCurrency(Number(value))}
                   style={{
                     fontSize: 9,
                     fontWeight: 600,
@@ -121,7 +121,7 @@ export function CostRevenueChart({ records }: { records: ComputedRecord[] }) {
                 <LabelList
                   dataKey="convertedValue"
                   position="top"
-                  formatter={(value: number) => formatCurrency(value)}
+                  formatter={(value) => formatCurrency(Number(value))}
                   style={{
                     fontSize: 9,
                     fontWeight: 600,

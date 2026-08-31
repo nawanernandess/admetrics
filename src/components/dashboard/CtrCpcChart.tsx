@@ -118,7 +118,7 @@ export function CtrCpcChart({ records }: { records: ComputedRecord[] }) {
                   dataKey="ctr"
                   position="top"
                   offset={6}
-                  formatter={(value: number) => formatPercent(value, 0)}
+                  formatter={(value) => formatPercent(Number(value), 0)}
                   style={{
                     fontSize: 9,
                     fontWeight: 600,
@@ -146,7 +146,7 @@ export function CtrCpcChart({ records }: { records: ComputedRecord[] }) {
                   dataKey="averageCpc"
                   position="top"
                   offset={14}
-                  formatter={(value: number) => formatCurrency(value)}
+                  formatter={(value) => formatCurrency(Number(value))}
                   style={{
                     fontSize: 9,
                     fontWeight: 600,
