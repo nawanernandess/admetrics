@@ -73,7 +73,7 @@ export function LoginScreen() {
         <ThemeToggle className="text-[var(--color-text-secondary)] hover:bg-[var(--color-hover-bg)]" />
       </header>
 
-      <div className="mx-auto grid w-full max-w-6xl grid-cols-1 items-center gap-12 px-6 pb-16 sm:flex-1 sm:content-center sm:px-10 sm:py-10 sm:pb-10 lg:grid-cols-2 lg:gap-16">
+      <div className="mx-auto grid w-full max-w-6xl flex-1 grid-cols-1 items-center content-start gap-12 px-6 pb-6 sm:content-center sm:px-10 sm:py-10 sm:pb-10 lg:grid-cols-2 lg:gap-16">
         {/* Painel promocional — só conteúdo de marca, sem nenhum controle
             interativo. Escondido no mobile para não gerar scroll extra na
             tela de login, aparece só a partir do breakpoint lg (desktop). */}
