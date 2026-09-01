@@ -62,7 +62,7 @@ export function LoginScreen() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[var(--color-bg)]">
+    <div className="flex min-h-dvh flex-col bg-[var(--color-bg)]">
       <div className="h-1 shrink-0 bg-[var(--color-accent)]" />
 
       <header className="mx-auto flex w-full max-w-6xl shrink-0 items-center justify-between px-6 py-6 sm:px-10">
