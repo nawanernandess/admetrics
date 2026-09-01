@@ -188,8 +188,8 @@ function MobileTabBar({
   onSelectTab: (tab: MainTab) => void
 }) {
   return (
-    <nav className="fixed inset-x-0 bottom-[calc(1rem+env(safe-area-inset-bottom))] z-30 flex justify-center sm:hidden">
-      <div className="flex items-center gap-1 rounded-full border border-[var(--color-card-border)] bg-[var(--color-card-bg)] p-1.5 shadow-lg">
+    <nav className="fixed inset-x-0 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-30 flex justify-center sm:hidden">
+      <div className="flex items-center gap-0.5 rounded-full border border-[var(--color-card-border)] bg-[var(--color-card-bg)] p-1 shadow-lg">
         {TABS.map(({ id, label, Icon }) => {
           const isActive = selectedTab === id
           return (
@@ -197,13 +197,13 @@ function MobileTabBar({
               key={id}
               type="button"
               onClick={() => onSelectTab(id)}
-              className={`flex items-center gap-1.5 rounded-full px-3.5 py-2.5 text-[11px] font-semibold ${
+              className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-[10px] font-semibold ${
                 isActive
                   ? 'bg-[var(--color-accent)] text-white'
                   : 'text-[var(--color-text-secondary)]'
               }`}
             >
-              <Icon className="h-4 w-4" />
+              <Icon className="h-3.5 w-3.5" />
               {label}
             </button>
           )
